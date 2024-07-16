@@ -2,7 +2,7 @@ import React from "react";
 import { ImageBackground, Text, TouchableOpacity, View } from "react-native";
 import styles from "./styleHome";
 
-const HomeScreen = () => {
+const HomeScreen = ({navigation}) => {
     return (
     <View style={styles.container}>
         <View style={styles.header}>
@@ -26,7 +26,7 @@ const HomeScreen = () => {
                     style={styles.icon}  
                 />
             </TouchableOpacity>
-            <TouchableOpacity style={styles.button}>
+            <TouchableOpacity style={styles.button} onPress={() => navigation.navigate('Rule')}>
                 <Text style={styles.textbutton}>RULE</Text>
                 <ImageBackground 
                     source={require('../../../assets/icon/rule-gaming.png')}

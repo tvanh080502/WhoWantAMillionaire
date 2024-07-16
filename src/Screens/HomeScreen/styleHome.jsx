@@ -38,7 +38,7 @@ const styles = StyleSheet.create({
         alignItems: 'center',
     },
     textbutton: {
-        fontSize: 24,
+        fontSize: 23,
         fontWeight: 'bold',
     },
     icon: {
