@@ -12,7 +12,10 @@ const HomeScreen = ({navigation}) => {
             />
         </View>
         <View style={styles.listchoice}>
-            <TouchableOpacity style={styles.button}>
+            <TouchableOpacity 
+            style={styles.button}
+            onPress={() => navigation.navigate('PlayLQ')}
+            >
                 <Text style={styles.textbutton}>PLAY</Text>
                 <ImageBackground 
                     source={require('../../../assets/icon/play.png')}
