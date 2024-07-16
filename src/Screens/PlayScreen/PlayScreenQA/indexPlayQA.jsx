@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, TouchableOpacity, ActivityIndicator } from 'react-native';
+import { View, Text, TouchableOpacity, ActivityIndicator, Alert } from 'react-native';
 import styles from './stylePlayQA';
 
 const PlayQAScreen = ({ navigation }) => {
@@ -15,9 +15,9 @@ const PlayQAScreen = ({ navigation }) => {
 
     const fetchQuestions = async () => {
         try {
-            const response = await fetch('http://10.0.2.2:3000/api/questions'); // Đúng endpoint
-            const text = await response.text();  // Fetch as text first
-            console.log('Response text:', text);  // Log the raw response text
+            const response = await fetch('http://10.0.2.2:3000/api/questions'); 
+            const text = await response.text();  
+            console.log('Response text:', text);  
 
             const json = JSON.parse(text);
             setQuestions(json);
@@ -45,6 +45,25 @@ const PlayQAScreen = ({ navigation }) => {
     if (isLoading) {
         return <ActivityIndicator size="large" color="#0000ff" />;
     }
+    if (currentQuestionIndex === 1) {
+        return (
+            <View style={styles.container}>
+                <Text style={styles.questionText}>Bạn đã chiến thắng!</Text>
+                <TouchableOpacity
+                    style={styles.nextButton}
+                    onPress={() => navigation.navigate('Highscore')}
+                >
+                    <Text style={styles.nextButtonText}>Xem bảng xếp hạng</Text>
+                </TouchableOpacity>
+                <TouchableOpacity
+                    style={styles.nextButton}
+                    onPress={() => navigation.navigate('Home')}
+                >
+                    <Text style={styles.nextButtonText}>Trở về</Text>
+                </TouchableOpacity>
+            </View>
+        );
+    }
 
     const currentQuestion = questions[currentQuestionIndex];
 
@@ -54,7 +73,9 @@ const PlayQAScreen = ({ navigation }) => {
 
     return (
         <View style={styles.container}>
-            <Text style={styles.questionText}>{currentQuestion.questionText}</Text>
+            <View style={styles.questionheader}>
+                <Text style={styles.questionText}>{currentQuestion.questionText}</Text>
+            </View>
             {currentQuestion.answers.map((answer) => (
                 <TouchableOpacity
                     key={answer.id}
@@ -74,7 +95,7 @@ const PlayQAScreen = ({ navigation }) => {
                         style={styles.nextButton}
                         onPress={handleNextQuestion}
                     >
-                        <Text style={styles.nextButtonText}>Next Question</Text>
+                        <Text style={styles.nextButtonText}>Câu hỏi tiếp theo</Text>
                     </TouchableOpacity>
                 ) : (
                     <TouchableOpacity
