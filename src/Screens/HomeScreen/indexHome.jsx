@@ -22,7 +22,7 @@ const HomeScreen = ({navigation}) => {
                     style={styles.icon}  
                 />
             </TouchableOpacity>
-            <TouchableOpacity style={styles.button}>
+            <TouchableOpacity style={styles.button} onPress={() => navigation.navigate('Highscore')}>
                 <Text style={styles.textbutton}>HIGH SCORE</Text>
                 <ImageBackground 
                     source={require('../../../assets/icon/bar-chart.png')}

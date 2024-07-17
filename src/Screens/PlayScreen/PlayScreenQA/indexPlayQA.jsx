@@ -28,12 +28,38 @@ const PlayQAScreen = ({ navigation }) => {
         }
     };
 
+    const getCurrentDateTime = () => {
+        const current = new Date();
+        return `${current.getFullYear()}-${current.getMonth() + 1}-${current.getDate()} ${current.getHours()}:${current.getMinutes()}:${current.getSeconds()}`;
+    };
+
+    const saveScore = async (score, dateTime) => {
+        try {
+            const response = await fetch('http://10.0.2.2:3000/api/scores', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ score, dateTime }),
+            });
+
+            const result = await response.json();
+            console.log('Score saved:', result);
+        } catch (error) {
+            console.error('Error saving score:', error);
+        }
+    };
+
     const handleAnswerPress = (answerId, isCorrect) => {
         if (selectedAnswer === null) {
             setSelectedAnswer(answerId);
             setIsAnswerCorrect(isCorrect);
             if (isCorrect) {
                 setScore(score + 100);  
+            } else {
+                const dateTime = getCurrentDateTime();
+                saveScore(score, dateTime);
+                Alert.alert('Bạn đã trả lời sai!', `Điểm số của bạn: ${score}`);
             }
         }
     };
@@ -50,6 +76,8 @@ const PlayQAScreen = ({ navigation }) => {
         return <ActivityIndicator size="large" color="#0000ff" />;
     }
     if (currentQuestionIndex === 15) {
+        const dateTime = getCurrentDateTime();
+        saveScore(score, dateTime);
         return (
             <View style={styles.container}>
                 <View style={styles.scorewin}>
