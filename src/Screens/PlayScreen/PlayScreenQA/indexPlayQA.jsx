@@ -8,6 +8,7 @@ const PlayQAScreen = ({ navigation }) => {
     const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
     const [selectedAnswer, setSelectedAnswer] = useState(null);
     const [isAnswerCorrect, setIsAnswerCorrect] = useState(false);
+    const [score, setScore] = useState(0);  
 
     useEffect(() => {
         fetchQuestions();
@@ -15,9 +16,9 @@ const PlayQAScreen = ({ navigation }) => {
 
     const fetchQuestions = async () => {
         try {
-            const response = await fetch('http://10.0.2.2:3000/api/questions'); 
-            const text = await response.text();  
-            console.log('Response text:', text);  
+            const response = await fetch('http://10.0.2.2:3000/api/questions');
+            const text = await response.text();
+            console.log('Response text:', text);
 
             const json = JSON.parse(text);
             setQuestions(json);
@@ -31,6 +32,9 @@ const PlayQAScreen = ({ navigation }) => {
         if (selectedAnswer === null) {
             setSelectedAnswer(answerId);
             setIsAnswerCorrect(isCorrect);
+            if (isCorrect) {
+                setScore(score + 100);  
+            }
         }
     };
 
@@ -45,10 +49,13 @@ const PlayQAScreen = ({ navigation }) => {
     if (isLoading) {
         return <ActivityIndicator size="large" color="#0000ff" />;
     }
-    if (currentQuestionIndex === 1) {
+    if (currentQuestionIndex === 15) {
         return (
             <View style={styles.container}>
-                <Text style={styles.questionText}>Bạn đã chiến thắng!</Text>
+                <View style={styles.scorewin}>
+                    <Text style={styles.winText}>Bạn đã chiến thắng!</Text>
+                    <Text style={styles.scoreText}>Điểm số: {score}</Text>
+                </View>
                 <TouchableOpacity
                     style={styles.nextButton}
                     onPress={() => navigation.navigate('Highscore')}
@@ -106,11 +113,12 @@ const PlayQAScreen = ({ navigation }) => {
                     </TouchableOpacity>
                 )
             )}
+            <View style={styles.score}>
+                <Text style={styles.scoreText}>Điểm số: {score}</Text> 
+            </View>
+ 
         </View>
     );
 };
 
 export default PlayQAScreen;
-
-
-

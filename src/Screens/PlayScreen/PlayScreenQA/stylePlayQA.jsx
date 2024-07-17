@@ -25,12 +25,14 @@ const styles = StyleSheet.create({
         textAlign: 'center',
     },
     answerButton: {
+        maxWidth: '90%',
+        minHeight: 50,
         marginVertical: 10,
         paddingHorizontal: 20,
         paddingVertical: 10,
         borderWidth: 1,
         borderColor: '#ddd',
-        borderRadius: 5,
+        borderRadius: 25,
         backgroundColor: '#fff',
         width: '100%',
         alignItems: 'center',
@@ -40,10 +42,10 @@ const styles = StyleSheet.create({
         color: '#333',
     },
     correctAnswer: {
-        backgroundColor: 'green',
+        backgroundColor: '#06D001',
     },
     wrongAnswer: {
-        backgroundColor: 'red',
+        backgroundColor: '#C40C0C',
     },
     nextButton: {
         width: '60%',
@@ -58,6 +60,35 @@ const styles = StyleSheet.create({
     nextButtonText: {
         color: 'black',
         fontSize: 18,
+    },
+    score: {
+        marginTop: '20%',
+        width: '70%',
+        height: 70,
+        borderRadius: 35,
+        borderWidth: 1,
+        borderColor: 'red',
+        backgroundColor: '#fff',
+        justifyContent:'center',
+        alignItems: 'center'
+    },
+    scoreText: {
+        fontSize: 27,
+        fontFamily: 'bold',
+    },
+    scorewin: {
+        width: '90%',
+        height: 100,
+        borderColor: 'red',
+        borderWidth: 1,
+        borderRadius: 50,
+        backgroundColor: '#fff',
+        justifyContent: 'center',
+        alignItems: 'center',
+    },
+    winText: {
+        fontSize:30,
+        fontFamily: 'bold',
     },
 });
 
