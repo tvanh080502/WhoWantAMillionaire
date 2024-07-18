@@ -44,7 +44,9 @@ const styles = StyleSheet.create({
     },
     timetextheader: {
         fontSize: 20,
-        fontFamily: 'bold',
+        fontFamily: 'blod',
+        color: '#000',
+        textAlign: 'center',
     },
     banner: {
         flex: 10,
@@ -176,12 +178,12 @@ const styles = StyleSheet.create({
         marginBottom: 15,
     },
     closeButton: {
-        backgroundColor: '#FF6347',
+        backgroundColor: '#ff7b70',
         padding: 10,
         borderRadius: 5,
     },
     closeButtonText: {
-        color: '#FFF',
+        color: '#fff',
         fontSize: 16,
     },
 });
