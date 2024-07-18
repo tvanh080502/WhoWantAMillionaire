@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, TouchableOpacity, ActivityIndicator, Alert } from 'react-native';
+import { View, Text, TouchableOpacity, ActivityIndicator, Alert, ImageBackground } from 'react-native';
 import styles from './stylePlayQA';
 
 const PlayQAScreen = ({ navigation }) => {
@@ -8,7 +8,25 @@ const PlayQAScreen = ({ navigation }) => {
     const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
     const [selectedAnswer, setSelectedAnswer] = useState(null);
     const [isAnswerCorrect, setIsAnswerCorrect] = useState(false);
-    const [score, setScore] = useState(0);  
+    const [score, setScore] = useState(0); 
+    const [seconds, setSeconds] = useState(120);
+    const [isWinner, setIsWinner] = useState(false);
+    const [timerRunning, settimerRunning] = useState(true);
+
+    useEffect(() => {
+        if (seconds > 0 && timerRunning ) {
+            const timer = setTimeout(() => {
+                setSeconds(seconds - 1);
+            }, 1000);
+            return () => clearTimeout(timer);
+        }
+    }, [seconds]);
+
+    useEffect(() => {
+        if (seconds === 0) {
+          handleTimeout();
+        }
+      }, [seconds]);
 
     useEffect(() => {
         fetchQuestions();
@@ -51,9 +69,10 @@ const PlayQAScreen = ({ navigation }) => {
     };
 
     const handleAnswerPress = (answerId, isCorrect) => {
-        if (selectedAnswer === null) {
+        if (selectedAnswer === null && seconds > 0) {
             setSelectedAnswer(answerId);
             setIsAnswerCorrect(isCorrect);
+            settimerRunning(false);
             if (isCorrect) {
                 setScore(score + 100);  
             } else {
@@ -65,17 +84,30 @@ const PlayQAScreen = ({ navigation }) => {
     };
 
     const handleNextQuestion = () => {
-        if (currentQuestionIndex < questions.length - 1) {
+        if (currentQuestionIndex < 14) {
             setCurrentQuestionIndex(currentQuestionIndex + 1);
             setSelectedAnswer(null);
             setIsAnswerCorrect(false);
+            settimerRunning(true);
+            setSeconds(120);
         }
+        else {
+            settimerRunning(false);
+            setIsWinner(true);
+        }
+    };
+
+    const handleTimeout = () => {
+        const dateTime = getCurrentDateTime();
+        saveScore(score, dateTime);
+        Alert.alert('Thời gian trả lời đã hết', `Điểm số của bạn: ${score}`);
     };
 
     if (isLoading) {
         return <ActivityIndicator size="large" color="#0000ff" />;
     }
-    if (currentQuestionIndex === 15) {
+
+    if (isWinner) {
         const dateTime = getCurrentDateTime();
         saveScore(score, dateTime);
         return (
@@ -108,43 +140,66 @@ const PlayQAScreen = ({ navigation }) => {
 
     return (
         <View style={styles.container}>
-            <View style={styles.questionheader}>
-                <Text style={styles.questionText}>{currentQuestion.questionText}</Text>
-            </View>
-            {currentQuestion.answers.map((answer) => (
-                <TouchableOpacity
-                    key={answer.id}
-                    style={[
-                        styles.answerButton,
-                        selectedAnswer === answer.id ? (answer.isCorrect ? styles.correctAnswer : styles.wrongAnswer) : null
-                    ]}
-                    onPress={() => handleAnswerPress(answer.id, answer.isCorrect)}
-                    disabled={selectedAnswer !== null} 
-                >
-                    <Text style={styles.answerText}>{answer.text}</Text>
-                </TouchableOpacity>
-            ))}
-            {selectedAnswer !== null && (
-                isAnswerCorrect ? (
-                    <TouchableOpacity
-                        style={styles.nextButton}
-                        onPress={handleNextQuestion}
+            <View style={styles.header}>
+                <TouchableOpacity 
+                style={styles.nextbutton}
+                onPress={() => navigation.navigate('PlayLQ')}>
+                    <ImageBackground
+                        source={require('../../../../assets/icon/back.png')}
+                        style={styles.iconimage}
                     >
-                        <Text style={styles.nextButtonText}>Câu hỏi tiếp theo</Text>
-                    </TouchableOpacity>
-                ) : (
+                    </ImageBackground>
+                </TouchableOpacity>
+                <View style={styles.timeheader}>
+                    <Text style={styles.timetextheader}>{seconds}</Text>
+                </View>
+            </View> 
+            <View style={styles.banner}>
+                <View style={styles.questionheader}>
+                    <Text style={styles.questionText}>{currentQuestion.questionText}</Text>
+                </View>
+                {currentQuestion.answers.map((answer) => (
                     <TouchableOpacity
-                        style={styles.nextButton}
-                        onPress={() => navigation.navigate('Home')} 
+                        key={answer.id}
+                        style={[
+                            styles.answerButton,
+                            selectedAnswer === answer.id ? (answer.isCorrect ? styles.correctAnswer : styles.wrongAnswer) : null
+                        ]}
+                        onPress={() => handleAnswerPress(answer.id, answer.isCorrect)}
+                        disabled={selectedAnswer !== null} 
+                    >
+                        <Text style={styles.answerText}>{answer.text}</Text>
+                    </TouchableOpacity>
+                ))}
+                {selectedAnswer !== null && (
+                    isAnswerCorrect ? (
+                        <TouchableOpacity
+                            style={styles.nextButton}
+                            onPress={handleNextQuestion}
+                        >
+                            <Text style={styles.nextButtonText}>Câu hỏi tiếp theo</Text>
+                        </TouchableOpacity>
+                    ) : (
+                        <TouchableOpacity
+                            style={styles.nextButton}
+                            onPress={() => navigation.navigate('Home')} 
+                        >
+                            <Text style={styles.nextButtonText}>Trở về</Text>
+                        </TouchableOpacity>
+                    )
+                )}
+                {seconds === 0 && (
+                    <TouchableOpacity
+                    style={styles.nextButton}
+                    onPress={() => navigation.navigate('Home')} 
                     >
                         <Text style={styles.nextButtonText}>Trở về</Text>
                     </TouchableOpacity>
-                )
-            )}
-            <View style={styles.score}>
-                <Text style={styles.scoreText}>Điểm số: {score}</Text> 
+                )}
+                <View style={styles.score}>
+                    <Text style={styles.scoreText}>Điểm số: {score}</Text> 
+                </View>
             </View>
- 
         </View>
     );
 };
