@@ -48,6 +48,7 @@ const styles = StyleSheet.create({
     },
     banner: {
         flex: 10,
+        marginTop: 50,
         justifyContent: 'center',
         alignItems: 'center'
     },
@@ -92,7 +93,7 @@ const styles = StyleSheet.create({
         marginTop: 20,
         paddingHorizontal: 20,
         paddingVertical:10,
-        backgroundColor: '#fff',
+        backgroundColor: '#caf0f8',
         borderRadius: 10,
         justifyContent: 'center',
         alignItems: 'center',
@@ -102,14 +103,14 @@ const styles = StyleSheet.create({
         fontSize: 18,
     },
     score: {
-        marginTop: '20%',
+        marginTop: '10%',
         marginBottom: '25%',
         minWidth: '60%',
-        height: 70,
+        height: 65,
         borderRadius: 35,
         borderWidth: 1,
         borderColor: 'red',
-        backgroundColor: '#fff',
+        backgroundColor: '#f8ed62',
         justifyContent:'center',
         alignItems: 'center'
     },
@@ -130,6 +131,58 @@ const styles = StyleSheet.create({
     winText: {
         fontSize:30,
         fontFamily: 'bold',
+    },
+    help: {
+        flex: 2,
+        flexDirection: 'row',
+        width: '90%',
+        justifyContent: 'center',
+        alignItems: 'center',
+    },
+    helpbutton: {
+        width: 60,
+        height: 60,
+        marginBottom: 40,
+        marginHorizontal: 30,
+        borderRadius: 30,
+        borderWidth: 1,
+        borderColor: 'red',
+        backgroundColor: '#ffbaba',
+        justifyContent: 'center',
+        alignItems:  'center',
+    },
+    buttonUsed: {
+        opacity: 0.4,
+    },
+    helpimage:{
+        width: 50,
+        height: 50,
+    },
+    modalOverlay: {
+        flex: 1,
+        justifyContent: 'center',
+        alignItems: 'center',
+        backgroundColor: 'rgba(0, 0, 0, 0.5)',
+    },
+    modalContent: {
+        width: 300,
+        padding: 20,
+        backgroundColor: '#FFF',
+        borderRadius: 10,
+        alignItems: 'center',
+    },
+    modalText: {
+        fontSize: 18,
+        marginBottom: 15,
+    },
+    closeButton: {
+        backgroundColor: '#FF6347',
+        padding: 10,
+        borderRadius: 5,
+    },
+    closeButtonText: {
+        color: '#FFF',
+        fontSize: 16,
     },
 });
 

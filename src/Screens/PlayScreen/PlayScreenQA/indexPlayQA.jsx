@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, TouchableOpacity, ActivityIndicator, Alert, ImageBackground } from 'react-native';
+import { View, Text, TouchableOpacity, ActivityIndicator, Alert, ImageBackground, Modal } from 'react-native';
 import styles from './stylePlayQA';
 
 const PlayQAScreen = ({ navigation }) => {
@@ -12,6 +12,10 @@ const PlayQAScreen = ({ navigation }) => {
     const [seconds, setSeconds] = useState(120);
     const [isWinner, setIsWinner] = useState(false);
     const [timerRunning, settimerRunning] = useState(true);
+    const [modalVisible, setModalVisible] = useState(false);
+    const [help50, sethelp50] = useState(true);
+    const [helpvote, sethelpvote] = useState(true);
+    const [helpcallfriend, sethelpcallfriend] = useState(true);
 
     useEffect(() => {
         if (seconds > 0 && timerRunning ) {
@@ -20,7 +24,7 @@ const PlayQAScreen = ({ navigation }) => {
             }, 1000);
             return () => clearTimeout(timer);
         }
-    }, [seconds]);
+    }, [seconds, timerRunning]);
 
     useEffect(() => {
         if (seconds === 0) {
@@ -101,6 +105,29 @@ const PlayQAScreen = ({ navigation }) => {
         const dateTime = getCurrentDateTime();
         saveScore(score, dateTime);
         Alert.alert('Thời gian trả lời đã hết', `Điểm số của bạn: ${score}`);
+    };
+
+    const handleOpenModal = () => {
+        setModalVisible(true);
+        settimerRunning(false);
+    };
+
+    const handleHelp = () => {
+        if (help50) {
+            sethelp50(false);
+            handleOpenModal();
+        } else if (helpvote) {
+            sethelpvote(false);
+            handleOpenModal();
+        } else if (helpcallfriend) {
+            sethelpcallfriend();
+            handleOpenModal();
+        }
+    };
+    
+    const handleCloseModal = () => {
+        setModalVisible(false);
+        settimerRunning(true);
     };
 
     if (isLoading) {
@@ -199,6 +226,53 @@ const PlayQAScreen = ({ navigation }) => {
                 <View style={styles.score}>
                     <Text style={styles.scoreText}>Điểm số: {score}</Text> 
                 </View>
+            </View>
+            <View style={styles.help}>
+                <TouchableOpacity 
+                    style={[styles.helpbutton, !help50 ? styles.buttonUsed : null]}
+                    onPress={handleHelp}
+                    disabled={!help50}
+                >
+                    <ImageBackground
+                    style={styles.helpimage}
+                    source={require('../../../../assets/icon/50.png')}
+                    />
+                </TouchableOpacity>
+                <TouchableOpacity 
+                    style={[styles.helpbutton, !helpvote ? styles.buttonUsed : null]}
+                    onPress={handleHelp}
+                    disabled={!helpvote}
+                >
+                    <ImageBackground
+                    style={styles.helpimage}
+                    source={require('../../../../assets/icon/voters.png')}
+                    />
+                </TouchableOpacity>
+                <TouchableOpacity 
+                    style={[styles.helpbutton, !helpcallfriend ? styles.buttonUsed : null]}
+                    onPress={handleHelp}
+                    disabled={!helpcallfriend}
+                >
+                    <ImageBackground
+                    style={styles.helpimage}
+                    source={require('../../../../assets/icon/call-friend.png')}
+                    />
+                </TouchableOpacity>
+                <Modal
+                        animationType="slide"
+                        transparent={true}
+                        visible={modalVisible}
+                        onRequestClose={handleCloseModal}
+                    >
+                    <View style={styles.modalOverlay}>
+                        <View style={styles.modalContent}>
+                            <Text style={styles.modalText}>Đây là nội dung của cửa sổ</Text>
+                            <TouchableOpacity style={styles.closeButton} onPress={handleCloseModal}>
+                            <Text style={styles.closeButtonText}>Đóng</Text>
+                            </TouchableOpacity>
+                        </View>
+                    </View>
+                </Modal>
             </View>
         </View>
     );
