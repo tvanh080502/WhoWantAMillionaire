@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, FlatList, ActivityIndicator } from 'react-native';
+import { View, Text, FlatList, ActivityIndicator, TouchableOpacity, ImageBackground } from 'react-native';
 import styles from './styleHighscore';
 
-const HighscoreScreen = () => {
+const HighscoreScreen = ({navigation}) => {
     const [isLoading, setIsLoading] = useState(true);
     const [scores, setScores] = useState([]);
 
@@ -27,18 +27,29 @@ const HighscoreScreen = () => {
 
     return (
         <View style={styles.container}>
-            <Text style={styles.title}>Bảng xếp hạng</Text>
-            <FlatList
-                data={scores}
-                keyExtractor={(item, index) => index.toString()}
-                renderItem={({ item, index }) => (
-                    <View style={styles.scoreItem}>
-                        <Text style={styles.rank}>{index + 1}</Text>
-                        <Text style={styles.score}>Điểm: {item.score}</Text>
-                        <Text style={styles.dateTime}>{item.dateTime}</Text>
-                    </View>
-                )}
-            />
+            <View style={styles.header}>
+                <TouchableOpacity style={styles.iconback} onPress={() => navigation.navigate('Home')}>
+                    <ImageBackground 
+                        source={require('../../../assets/icon/back.png')}
+                        style={styles.iconback}  
+                    />
+                </TouchableOpacity>
+                <Text style={styles.textrule}>Bảng xếp hạng</Text>
+            </View>
+            <View style={styles.listrank}>
+                <FlatList
+                    data={scores}
+                    keyExtractor={(item, index) => index.toString()}
+                    renderItem={({ item, index }) => (
+                        <View style={styles.scoreItem}>
+                            <Text style={styles.rank}>{index + 1}</Text>
+                            <Text style={styles.score}>Điểm: {item.score}</Text>
+                            <Text style={styles.dateTime}>{item.dateTime}</Text>
+                        </View>
+                    )}
+                >
+                </FlatList>
+            </View>
         </View>
     );
 };
