@@ -16,6 +16,7 @@ const PlayQAScreen = ({ navigation }) => {
     const [help50, sethelp50] = useState(true);
     const [helpvote, sethelpvote] = useState(true);
     const [helpcallfriend, sethelpcallfriend] = useState(true);
+    const [confirmationModalVisible, setConfirmationModalVisible] = useState(false);
 
     useEffect(() => {
         if (seconds > 0 && timerRunning ) {
@@ -130,6 +131,24 @@ const PlayQAScreen = ({ navigation }) => {
         settimerRunning(true);
     };
 
+    const handleShowConfirmationModal = () => {
+        setConfirmationModalVisible(true);
+        settimerRunning(false);
+    };
+    
+    const handleConfirmStopGame = () => {
+        const dateTime = getCurrentDateTime();
+        saveScore(score, dateTime);
+        setConfirmationModalVisible(false);
+        navigation.navigate('Home');
+    };
+    
+    const handleCancelStopGame = () => {
+        setConfirmationModalVisible(false);
+        settimerRunning(true);
+    };
+    
+
     if (isLoading) {
         return <ActivityIndicator size="large" color="#0000ff" />;
     }
@@ -170,7 +189,7 @@ const PlayQAScreen = ({ navigation }) => {
             <View style={styles.header}>
                 <TouchableOpacity 
                 style={styles.nextbutton}
-                onPress={handleClosePlay}
+                onPress={handleShowConfirmationModal}
                 >
                     <ImageBackground
                         source={require('../../../../assets/icon/back.png')}
@@ -178,6 +197,28 @@ const PlayQAScreen = ({ navigation }) => {
                     >
                     </ImageBackground>
                 </TouchableOpacity>
+
+                <Modal
+                    animationType="slide"
+                    transparent={true}
+                    visible={confirmationModalVisible}
+                    onRequestClose={handleCancelStopGame}
+                >
+                    <View style={styles.modalclose}>
+                        <View style={styles.modalclosewindow}>
+                            <Text style={styles.modalclosetext}>Bạn có chắc chắn muốn dừng cuộc chơi không?</Text>
+                            <View style={styles.modalbutton}>
+                                <TouchableOpacity style={styles.closesaveback} onPress={handleConfirmStopGame}>
+                                    <Text style={styles.closeButtonText}>Có</Text>
+                                </TouchableOpacity>
+                                <TouchableOpacity style={styles.closestop} onPress={handleCancelStopGame}>
+                                    <Text style={styles.closeButtonText}>Không</Text>
+                                </TouchableOpacity>
+                            </View>
+                        </View>
+                    </View>
+                </Modal>
+
                 <View style={styles.timeheader}>
                     <Text style={styles.timetextheader}>{seconds}</Text>
                 </View>
