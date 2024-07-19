@@ -107,7 +107,7 @@ const PlayQAScreen = ({ navigation }) => {
         Alert.alert('Thời gian trả lời đã hết', `Điểm số của bạn: ${score}`);
     };
 
-    const handleOpenModal = () => {
+    const handleOpenModalHelp = () => {
         setModalVisible(true);
         settimerRunning(false);
     };
@@ -115,17 +115,17 @@ const PlayQAScreen = ({ navigation }) => {
     const handleHelp = () => {
         if (help50) {
             sethelp50(false);
-            handleOpenModal();
+            handleOpenModalHelp();
         } else if (helpvote) {
             sethelpvote(false);
-            handleOpenModal();
+            handleOpenModalHelp();
         } else if (helpcallfriend) {
             sethelpcallfriend();
-            handleOpenModal();
+            handleOpenModalHelp();
         }
     };
     
-    const handleCloseModal = () => {
+    const handleCloseModalHelp = () => {
         setModalVisible(false);
         settimerRunning(true);
     };
@@ -170,7 +170,8 @@ const PlayQAScreen = ({ navigation }) => {
             <View style={styles.header}>
                 <TouchableOpacity 
                 style={styles.nextbutton}
-                onPress={() => navigation.navigate('PlayLQ')}>
+                onPress={handleClosePlay}
+                >
                     <ImageBackground
                         source={require('../../../../assets/icon/back.png')}
                         style={styles.iconimage}
@@ -262,13 +263,13 @@ const PlayQAScreen = ({ navigation }) => {
                         animationType="slide"
                         transparent={true}
                         visible={modalVisible}
-                        onRequestClose={handleCloseModal}
+                        onRequestClose={handleCloseModalHelp}
                     >
                     <View style={styles.modalOverlay}>
                         <View style={styles.modalContent}>
-                            <Text style={styles.modalText}>Đây là nội dung của cửa sổ</Text>
-                            <TouchableOpacity style={styles.closeButton} onPress={handleCloseModal}>
-                            <Text style={styles.closeButtonText}>Đóng</Text>
+                            <Text style={styles.modalText}>Quyền trợ giúp đã hiển thị</Text>
+                            <TouchableOpacity style={styles.closeButton} onPress={handleCloseModalHelp}>
+                                <Text style={styles.closeButtonText}>Đóng</Text>
                             </TouchableOpacity>
                         </View>
                     </View>
