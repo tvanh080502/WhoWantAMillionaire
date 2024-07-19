@@ -49,6 +49,8 @@ const styles = StyleSheet.create({
     },
     modalclosetext: {
         fontSize: 20,
+        fontFamily: 'bold',
+        color: 'black',
         marginBottom: 20,
     },
     modalbutton: {
