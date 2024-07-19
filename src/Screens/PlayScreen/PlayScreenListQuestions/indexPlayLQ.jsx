@@ -1,8 +1,45 @@
-import React from 'react';
-import { ImageBackground, ScrollView, Text, TouchableOpacity, View } from 'react-native';
+import React, { useState, useEffect } from 'react';
+import { ImageBackground, FlatList, Text, TouchableOpacity, View } from 'react-native';
 import styles from './stylePlayLQ';
 
 const PlayLQScreen = ({navigation}) => {
+
+    const [questions, setQuestions] = useState([]);
+    const [isLoading, setIsLoading] = useState(true);
+
+    useEffect(() => {
+        fetchQuestions();
+    }, []);
+
+    const fetchQuestions = async () => {
+        try {
+            const response = await fetch('http://10.0.2.2:3000/api/questions');
+            const text = await response.text();
+            console.log('Response text:', text);
+
+            const json = JSON.parse(text);
+            setQuestions(json.slice(0, 15));
+            setIsLoading(false);
+        } catch (error) {
+            console.error('Error fetching questions:', error);
+        }
+    };
+
+    const renderQuestion = ({ item, index }) => {
+        const points = (index + 1) * 100;
+        return (
+            <View key={item.id} style={styles.QA}>
+                <Text style={styles.textid}>{item.id}</Text>
+                <ImageBackground
+                    source={require('../../../../assets/icon/question.png')}
+                    style={styles.iconquestion}
+                >
+                </ImageBackground>
+                <Text style={styles.textid}>{points}</Text>
+            </View>
+        );
+    };
+
     return (
         <View style={styles.container}>
             <View style={styles.header}>
@@ -29,13 +66,20 @@ const PlayLQScreen = ({navigation}) => {
                     </ImageBackground>
                 </TouchableOpacity>
             </View> 
-            <ScrollView style={styles.listQ}>
-                <View style={styles.QA}>
-                </View>
-            </ScrollView>   
+            <View style={styles.viewlist}>
+                {isLoading ? (
+                    <Text>Đang tải câu hỏi...</Text>
+                ) : (
+                    <FlatList
+                        data={questions}
+                        renderItem={renderQuestion}
+                        keyExtractor={(item) => item.id.toString()}
+                        contentContainerStyle={styles.listQ}
+                    />
+                )}
+            </View>
         </View>
     );
 }
-
 
 export default PlayLQScreen;

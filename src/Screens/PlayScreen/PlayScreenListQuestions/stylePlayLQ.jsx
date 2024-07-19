@@ -33,19 +33,34 @@ const styles = StyleSheet.create({
         fontSize: 23,
         color: '#fff',
     },
-    listQ: {
+    viewlist: {
         flex: 1,
+        marginBottom: 20,
+    },
+    listQ: {
+        flexGrow: 1,
+        justifyContent: 'center',
+        alignItems: 'center',
     },
     QA: {
-        width: '80%',
-        height: 60,
-        backgroundColor: '#fff',
-        borderRadius: 30,
-        borderWidth: 1,
-        borderColor: 'red',
-        marginHorizontal: '10%',
-        marginVertical: 10,
-    }
+        flexDirection: 'row',
+        minWidth: '80%',
+        height: 50,
+        backgroundColor: '#F4A460',
+        marginBottom: 20,
+        borderRadius: 25,
+        justifyContent: 'center',
+        alignItems: 'center',
+    },
+    textid: {
+        fontSize: 25,
+        marginHorizontal: 5,
+    },
+    iconquestion: {
+        width: 25,
+        height:25,
+        borderRadius: 12.5,
+    },
 });
 
 export default styles;
