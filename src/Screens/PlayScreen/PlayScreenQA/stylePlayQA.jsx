@@ -96,6 +96,16 @@ const styles = StyleSheet.create({
         color: '#000',
         textAlign: 'center',
     },
+    closebacktimeout: {
+        width: 90,
+        height:45,
+        backgroundColor: '#ff7b70',
+        borderRadius: 15,
+        borderWidth: 2,
+        borderColor: 'red',
+        justifyContent: 'center',
+        alignItems: 'center',
+    },
     banner: {
         flex: 10,
         marginTop: 50,

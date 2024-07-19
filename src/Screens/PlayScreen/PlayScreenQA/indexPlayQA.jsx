@@ -17,6 +17,7 @@ const PlayQAScreen = ({ navigation }) => {
     const [helpvote, sethelpvote] = useState(true);
     const [helpcallfriend, sethelpcallfriend] = useState(true);
     const [confirmationModalVisible, setConfirmationModalVisible] = useState(false);
+    const [modalTimeout, setmodalTimeout] = useState(false);
 
     useEffect(() => {
         if (seconds > 0 && timerRunning ) {
@@ -29,7 +30,7 @@ const PlayQAScreen = ({ navigation }) => {
 
     useEffect(() => {
         if (seconds === 0) {
-          handleTimeout();
+            setmodalTimeout(true);
         }
       }, [seconds]);
 
@@ -103,9 +104,10 @@ const PlayQAScreen = ({ navigation }) => {
     };
 
     const handleTimeout = () => {
+        setmodalTimeout(false);
         const dateTime = getCurrentDateTime();
         saveScore(score, dateTime);
-        Alert.alert('Thời gian trả lời đã hết', `Điểm số của bạn: ${score}`);
+        navigation.navigate('Home');
     };
 
     const handleOpenModalHelp = () => {
@@ -147,7 +149,10 @@ const PlayQAScreen = ({ navigation }) => {
         setConfirmationModalVisible(false);
         settimerRunning(true);
     };
-    
+
+    const handleTimeoutStopGame = () => {
+        setmodalTimeout(false);
+    };
 
     if (isLoading) {
         return <ActivityIndicator size="large" color="#0000ff" />;
@@ -257,13 +262,25 @@ const PlayQAScreen = ({ navigation }) => {
                         </TouchableOpacity>
                     )
                 )}
-                {seconds === 0 && (
-                    <TouchableOpacity
-                    style={styles.nextButton}
-                    onPress={() => navigation.navigate('Home')} 
+                {modalTimeout && (
+                    <Modal
+                    animationType="slide"
+                    transparent={true}
+                    visible={modalTimeout}
+                    onRequestClose={handleTimeoutStopGame}
                     >
-                        <Text style={styles.nextButtonText}>Trở về</Text>
-                    </TouchableOpacity>
+                        <View style={styles.modalclose}>
+                            <View style={styles.modalclosewindow}>
+                                <Text style={styles.modalclosetext}>Thời gian đã hết</Text>
+                                <Text style={styles.modalclosetext}>Điểm số của bạn: {score}</Text>
+                                <View style={styles.modalbutton}>
+                                    <TouchableOpacity style={styles.closebacktimeout} onPress={handleTimeout}>
+                                        <Text style={styles.closeButtonText}>Trở về</Text>
+                                    </TouchableOpacity>
+                                </View>
+                            </View>
+                        </View>
+                    </Modal>
                 )}
                 <View style={styles.score}>
                     <Text style={styles.scoreText}>Điểm số: {score}</Text> 
