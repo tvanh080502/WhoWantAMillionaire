@@ -304,6 +304,11 @@ const PlayQAScreen = ({ navigation }) => {
 
                 <View style={styles.timeheader}>
                     <Text style={styles.timetextheader}>{seconds}</Text>
+                    <ImageBackground
+                        source={require('../../../../assets/icon/clock.png')}
+                        style={styles.iconclock}
+                    >
+                    </ImageBackground>
                 </View>
             </View> 
             <View style={styles.banner}>

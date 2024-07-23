@@ -83,8 +83,9 @@ const styles = StyleSheet.create({
         height: 50,
     },
     timeheader: {
-        width: 50,
+        width: 120,
         height: 50,
+        flexDirection: 'row',
         backgroundColor: '#fff',
         borderRadius: 25,
         borderWidth: 1,
@@ -93,10 +94,16 @@ const styles = StyleSheet.create({
         alignItems: 'center',
     },
     timetextheader: {
-        fontSize: 20,
+        marginRight: 15,
+        fontSize: 24,
         fontFamily: 'blod',
         color: '#000',
         textAlign: 'center',
+    },
+    iconclock: {
+        width: 30,
+        height: 30,
+        borderRadius: 15,
     },
     closebacktimeout: {
         width: 90,
