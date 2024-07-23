@@ -28,9 +28,9 @@ const styles = StyleSheet.create({
         color: '#fff',
     },
     textRule: {
-        width: '90%',
-        height: '90%',
-        marginHorizontal: '5%',
+        width: '84%',
+        marginHorizontal: '8%',
+        marginBottom: '8%',
     },
     item: {
         marginBottom: 16,
