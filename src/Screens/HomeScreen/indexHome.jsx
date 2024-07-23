@@ -22,6 +22,7 @@ const HomeScreen = ({ navigation }) => {
                 return;
             }
             newSound.setVolume(volume); 
+            newSound.setNumberOfLoops(-1); // Lặp lại vô hạn
             newSound.play((success) => {
                 if (!success) {
                     console.log('Playback failed due to audio decoding errors');

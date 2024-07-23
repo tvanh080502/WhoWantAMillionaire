@@ -1,6 +1,12 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
+import { useFocusEffect } from '@react-navigation/native';
 import { View, Text, TouchableOpacity, ActivityIndicator, Alert, ImageBackground, Modal } from 'react-native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import Sound from 'react-native-sound';
 import styles from './stylePlayQA';
+
+// Cài đặt danh mục âm thanh
+Sound.setCategory('Playback');
 
 const PlayQAScreen = ({ navigation }) => {
     const [isLoading, setIsLoading] = useState(true);
@@ -18,6 +24,32 @@ const PlayQAScreen = ({ navigation }) => {
     const [helpcallfriend, sethelpcallfriend] = useState(true);
     const [confirmationModalVisible, setConfirmationModalVisible] = useState(false);
     const [modalTimeout, setmodalTimeout] = useState(false);
+    const [sound, setSound] = useState(null); // Trạng thái âm thanh
+    const [volume, setVolume] = useState(1); // Trạng thái âm lượng
+
+    // Hàm để tải âm lượng từ AsyncStorage và phát âm thanh
+    useFocusEffect(
+        useCallback(() => {
+            const loadVolume = async () => {
+                try {
+                    const storedVolume = await AsyncStorage.getItem('appVolume');
+                    // Giá trị mặc định là 1
+                    setVolume(storedVolume ? parseFloat(storedVolume) : 1); 
+                } catch (error) {
+                    console.error('Failed to fetch volume:', error);
+                }
+            };
+
+            loadVolume().then(playSound);
+
+            return () => {
+                if (sound) {
+                    // Dừng âm thanh và giải phóng tài nguyên khi màn hình không còn hiển thị
+                    sound.stop(() => sound.release()); 
+                }
+            };
+        }, [sound, volume])
+    );
 
     useEffect(() => {
         if (seconds > 0 && timerRunning ) {
@@ -160,6 +192,26 @@ const PlayQAScreen = ({ navigation }) => {
 
     const handleTimeoutStopGame = () => {
         setmodalTimeout(false);
+    };
+
+    // Hàm để tải âm thanh và phát nó
+    const playSound = async () => {
+        const soundPath = require('../../../../assets/sound/sound_playscreenqa.mp3');
+
+        const newSound = new Sound(soundPath, '', (error) => {
+            if (error) {
+                console.log('Failed to load the sound', error);
+                return;
+            }
+            newSound.setVolume(volume); 
+            newSound.setNumberOfLoops(-1); // Lặp lại vô hạn
+            newSound.play((success) => {
+                if (!success) {
+                    console.log('Playback failed due to audio decoding errors');
+                }
+            });
+        });
+        setSound(newSound);
     };
 
     if (isLoading) {

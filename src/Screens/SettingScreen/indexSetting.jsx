@@ -28,7 +28,7 @@ const SettingScreen = ({ navigation }) => {
                 <Text style={styles.settingtext}>Cài đặt</Text>
             </View>
             <View style={styles.settingcontent}>
-                <Text style={styles.soundtext}>Âm lượng</Text>
+                <Text style={styles.soundtext}>Âm thanh</Text>
                 <View style={styles.soundcontent}>
                     <View style={styles.buttonsound}>
                         <ImageBackground 
