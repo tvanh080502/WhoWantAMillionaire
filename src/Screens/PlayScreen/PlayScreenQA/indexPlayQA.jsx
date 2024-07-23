@@ -24,6 +24,7 @@ const PlayQAScreen = ({ navigation }) => {
     const [helpcallfriend, sethelpcallfriend] = useState(true);
     const [confirmationModalVisible, setConfirmationModalVisible] = useState(false);
     const [modalTimeout, setmodalTimeout] = useState(false);
+    const [modalWrongAnswer, setmodalWrongAnswer] = useState(false);
     const [sound, setSound] = useState(null); // Trạng thái âm thanh
     const [volume, setVolume] = useState(1); // Trạng thái âm lượng
 
@@ -64,7 +65,13 @@ const PlayQAScreen = ({ navigation }) => {
         if (seconds === 0) {
             setmodalTimeout(true);
         }
-      }, [seconds]);
+    }, [seconds]);
+
+    useEffect(() => {
+        if (!isAnswerCorrect) {
+            setmodalWrongAnswer(true);
+        }
+    }, [isAnswerCorrect]);
 
     useEffect(() => {
         fetchQuestions();
@@ -114,9 +121,9 @@ const PlayQAScreen = ({ navigation }) => {
             if (isCorrect) {
                 setScore(score + 100);  
             } else {
-                const dateTime = getCurrentDateTime();
-                saveScore(score, dateTime);
-                Alert.alert('Bạn đã trả lời sai!', `Điểm số của bạn: ${score}`);
+                sethelp50(false);
+                sethelpcallfriend(false);
+                sethelpvote(false);
             }
         }
     };
@@ -137,6 +144,13 @@ const PlayQAScreen = ({ navigation }) => {
 
     const handleTimeout = () => {
         setmodalTimeout(false);
+        const dateTime = getCurrentDateTime();
+        saveScore(score, dateTime);
+        navigation.navigate('Home');
+    };
+
+    const handleWrongAnswer = () => {
+        setmodalWrongAnswer(false);
         const dateTime = getCurrentDateTime();
         saveScore(score, dateTime);
         navigation.navigate('Home');
@@ -192,6 +206,10 @@ const PlayQAScreen = ({ navigation }) => {
 
     const handleTimeoutStopGame = () => {
         setmodalTimeout(false);
+    };
+    
+    const handleWrongAnswerGame = () => {
+        setmodalWrongAnswer(false);
     };
 
     // Hàm để tải âm thanh và phát nó
@@ -314,12 +332,24 @@ const PlayQAScreen = ({ navigation }) => {
                             <Text style={styles.nextButtonText}>Câu hỏi tiếp theo</Text>
                         </TouchableOpacity>
                     ) : (
-                        <TouchableOpacity
-                            style={styles.nextButton}
-                            onPress={() => navigation.navigate('Home')} 
+                        <Modal
+                        animationType="slide"
+                        transparent={true}
+                        visible={modalWrongAnswer}
+                        onRequestClose={handleWrongAnswerGame}
                         >
-                            <Text style={styles.nextButtonText}>Trở về</Text>
-                        </TouchableOpacity>
+                            <View style={styles.modalclose}>
+                                <View style={styles.modalclosewindow}>
+                                    <Text style={styles.modalclosetext}>Bạn đã trả lời sai</Text>
+                                    <Text style={styles.modalclosetext}>Điểm số của bạn: {score}</Text>
+                                    <View style={styles.modalbutton}>
+                                        <TouchableOpacity style={styles.closebacktimeout} onPress={handleWrongAnswer}>
+                                            <Text style={styles.closeButtonText}>Trở về</Text>
+                                        </TouchableOpacity>
+                                    </View>
+                                </View>
+                            </View>
+                        </Modal>
                     )
                 )}
                 {modalTimeout && (
