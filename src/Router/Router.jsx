@@ -6,6 +6,7 @@ import RuleScreen from '../Screens/RuleScreen/indexRule'
 import PlayLQScreen from '../Screens/PlayScreen/PlayScreenListQuestions/indexPlayLQ';
 import PlayQAScreen from '../Screens/PlayScreen/PlayScreenQA/indexPlayQA';
 import HighscoreScreen from '../Screens/HighscoreScreen/indexHighscore';
+import SettingScreen from '../Screens/SettingScreen/indexSetting';
 
 const Stack = createStackNavigator();
 
@@ -36,6 +37,11 @@ const Router = () => {
         <Stack.Screen 
             name="Highscore" 
             component={HighscoreScreen} 
+            options={{ headerShown: false }} 
+        />
+        <Stack.Screen 
+            name="Setting" 
+            component={SettingScreen} 
             options={{ headerShown: false }} 
         />
       </Stack.Navigator>

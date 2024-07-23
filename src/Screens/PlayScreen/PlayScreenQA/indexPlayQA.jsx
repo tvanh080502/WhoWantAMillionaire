@@ -136,7 +136,6 @@ const PlayQAScreen = ({ navigation }) => {
         }
     };
     
-    
     const handleCloseModalHelp = () => {
         setModalVisible(false);
         settimerRunning(true);
