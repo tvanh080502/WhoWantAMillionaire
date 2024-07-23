@@ -115,18 +115,27 @@ const PlayQAScreen = ({ navigation }) => {
         settimerRunning(false);
     };
 
-    const handleHelp = () => {
+    const handleHelp50 = () => {
         if (help50) {
             sethelp50(false);
             handleOpenModalHelp();
-        } else if (helpvote) {
+        }
+    };
+    
+    const handleHelpvote = () => {
+        if (helpvote) {
             sethelpvote(false);
-            handleOpenModalHelp();
-        } else if (helpcallfriend) {
-            sethelpcallfriend();
             handleOpenModalHelp();
         }
     };
+    
+    const handleHelpcallfriend = () => {
+        if (helpcallfriend) {
+            sethelpcallfriend(false);
+            handleOpenModalHelp();
+        }
+    };
+    
     
     const handleCloseModalHelp = () => {
         setModalVisible(false);
@@ -289,7 +298,7 @@ const PlayQAScreen = ({ navigation }) => {
             <View style={styles.help}>
                 <TouchableOpacity 
                     style={[styles.helpbutton, !help50 ? styles.buttonUsed : null]}
-                    onPress={handleHelp}
+                    onPress={handleHelp50}
                     disabled={!help50}
                 >
                     <ImageBackground
@@ -299,7 +308,7 @@ const PlayQAScreen = ({ navigation }) => {
                 </TouchableOpacity>
                 <TouchableOpacity 
                     style={[styles.helpbutton, !helpvote ? styles.buttonUsed : null]}
-                    onPress={handleHelp}
+                    onPress={handleHelpvote}
                     disabled={!helpvote}
                 >
                     <ImageBackground
@@ -309,7 +318,7 @@ const PlayQAScreen = ({ navigation }) => {
                 </TouchableOpacity>
                 <TouchableOpacity 
                     style={[styles.helpbutton, !helpcallfriend ? styles.buttonUsed : null]}
-                    onPress={handleHelp}
+                    onPress={handleHelpcallfriend}
                     disabled={!helpcallfriend}
                 >
                     <ImageBackground
