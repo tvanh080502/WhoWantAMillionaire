@@ -14,7 +14,8 @@ const HighscoreScreen = ({navigation}) => {
         try {
             const response = await fetch('http://10.0.2.2:3000/api/scores');
             const json = await response.json();
-            setScores(json);
+            const sortedScores = json.sort((a, b) => b.score - a.score).slice(0, 50);
+            setScores(sortedScores);
             setIsLoading(false);
         } catch (error) {
             console.error('Error fetching scores:', error);
