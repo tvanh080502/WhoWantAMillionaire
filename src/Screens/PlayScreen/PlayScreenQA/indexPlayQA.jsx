@@ -9,26 +9,26 @@ import styles from './stylePlayQA';
 Sound.setCategory('Playback');
 
 const PlayQAScreen = ({ navigation }) => {
-    const [isLoading, setIsLoading] = useState(true);
-    const [questions, setQuestions] = useState([]);
-    const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
-    const [selectedAnswer, setSelectedAnswer] = useState(null);
-    const [isAnswerCorrect, setIsAnswerCorrect] = useState(false);
-    const [score, setScore] = useState(0); 
-    const [seconds, setSeconds] = useState(120);
-    const [isWinner, setIsWinner] = useState(false);
-    const [timerRunning, settimerRunning] = useState(true);
-    const [modalVisible, setModalVisible] = useState(false);
-    const [help50, sethelp50] = useState(true);
-    const [helpvote, sethelpvote] = useState(true);
-    const [helpcallfriend, sethelpcallfriend] = useState(true);
-    const [confirmationModalVisible, setConfirmationModalVisible] = useState(false);
-    const [modalTimeout, setmodalTimeout] = useState(false);
-    const [modalWrongAnswer, setmodalWrongAnswer] = useState(false);
+    const [isLoading, setIsLoading] = useState(true); //Trạng thái loading
+    const [questions, setQuestions] = useState([]); //Lấy câu hỏi từ api
+    const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0); // Setup đếm số lượng câu hỏi dã trả lời đúng liên tiếp là 0
+    const [selectedAnswer, setSelectedAnswer] = useState(null); // Kiểm tra có chọn câu trả lời hay không
+    const [isAnswerCorrect, setIsAnswerCorrect] = useState(false); //Kiểm tra đúng sai câu trả lời
+    const [score, setScore] = useState(0); //Setup số điểm ban đầu là 0
+    const [seconds, setSeconds] = useState(120); //Setup thời gian đếm ngược là 120s
+    const [isWinner, setIsWinner] = useState(false); //Trạng thái kiểm tra người chiến thắng
+    const [timerRunning, settimerRunning] = useState(true); //Trạng thái thời gian đếm ngược chạy
+    const [modalVisible, setModalVisible] = useState(false);//Trạng thái dóng mở modal trợ giúp
+    const [help50, sethelp50] = useState(true);//Trạng thái sử dụng quyền trợ giúp 50/50
+    const [helpvote, sethelpvote] = useState(true);//Trạng thái sử dụng quyền trợ giúp vote
+    const [helpcallfriend, sethelpcallfriend] = useState(true); //Trạng thái sử dụng quyền trợ giúp helpcall
+    const [confirmationModalVisible, setConfirmationModalVisible] = useState(false); //Trạng thái để mở của sổ dừng cuộc chơi
+    const [modalTimeout, setmodalTimeout] = useState(false); //Trạng thái kiểm tra hết giờ trả lời câu hỏi
+    const [modalWrongAnswer, setmodalWrongAnswer] = useState(false); //Trạng thái khi trả lời sai để đóng mở modal
     const [sound, setSound] = useState(null); // Trạng thái âm thanh
     const [volume, setVolume] = useState(1); // Trạng thái âm lượng
 
-    // Hàm để tải âm lượng từ AsyncStorage và phát âm thanh
+    // Hook để tải âm lượng từ AsyncStorage và phát âm thanh
     useFocusEffect(
         useCallback(() => {
             const loadVolume = async () => {
@@ -52,6 +52,7 @@ const PlayQAScreen = ({ navigation }) => {
         }, [sound, volume])
     );
 
+    // Hook đếm ngược và kiếm tra trạng thái đang chạy của thời gian đếm ngược
     useEffect(() => {
         if (seconds > 0 && timerRunning ) {
             const timer = setTimeout(() => {
@@ -61,17 +62,20 @@ const PlayQAScreen = ({ navigation }) => {
         }
     }, [seconds, timerRunning]);
 
+    // Hook kiểm tra thời gian đếm ngược đã hết
     useEffect(() => {
         if (seconds === 0) {
             setmodalTimeout(true);
         }
     }, [seconds]);
 
+    // Hook kiểm tra câu trả lời
     useEffect(() => {
         if (!isAnswerCorrect) {
             setmodalWrongAnswer(true);
         }
     }, [isAnswerCorrect]);
+
 
     useEffect(() => {
         fetchQuestions();
@@ -91,6 +95,7 @@ const PlayQAScreen = ({ navigation }) => {
         }
     };
 
+    // Hàm lấy giá trị thời gian
     const getCurrentDateTime = () => {
         const current = new Date();
         return `${current.getFullYear()}-${current.getMonth() + 1}-${current.getDate()} ${current.getHours()}:${current.getMinutes()}:${current.getSeconds()}`;
@@ -113,6 +118,7 @@ const PlayQAScreen = ({ navigation }) => {
         }
     };
 
+    // Hàm kiểm tra các trạng thái khi trả lời câu hỏi
     const handleAnswerPress = (answerId, isCorrect) => {
         if (selectedAnswer === null && seconds > 0) {
             setSelectedAnswer(answerId);
@@ -156,6 +162,7 @@ const PlayQAScreen = ({ navigation }) => {
         navigation.navigate('Home');
     };
 
+    // Hàm để mở của sổ khi chọn quyền trợ giúp
     const handleOpenModalHelp = () => {
         setModalVisible(true);
         settimerRunning(false);
@@ -215,7 +222,7 @@ const PlayQAScreen = ({ navigation }) => {
     // Hàm để tải âm thanh và phát nó
     const playSound = async () => {
         const soundPath = require('../../../../assets/sound/sound_playscreenqa.mp3');
-
+    
         const newSound = new Sound(soundPath, '', (error) => {
             if (error) {
                 console.log('Failed to load the sound', error);
@@ -229,8 +236,10 @@ const PlayQAScreen = ({ navigation }) => {
                 }
             });
         });
+    
         setSound(newSound);
     };
+    
 
     if (isLoading) {
         return <ActivityIndicator size="large" color="#0000ff" />;
