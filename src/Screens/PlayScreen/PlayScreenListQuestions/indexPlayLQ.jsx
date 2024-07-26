@@ -1,15 +1,42 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { ImageBackground, FlatList, Text, TouchableOpacity, View } from 'react-native';
+import Sound from 'react-native-sound';
+import { useFocusEffect } from '@react-navigation/native';
 import styles from './stylePlayLQ';
 
 const PlayLQScreen = ({navigation}) => {
 
     const [questions, setQuestions] = useState([]);
     const [isLoading, setIsLoading] = useState(true);
+    const soundRef = React.useRef(null);
 
     useEffect(() => {
         fetchQuestions();
     }, []);
+
+    useFocusEffect(
+        useCallback(() => {
+            if (!soundRef.current) {
+                playSound();
+            } else {
+                soundRef.current.play((success) => {
+                    if (!success) {
+                        console.error('Sound playback failed');
+                    }
+                });
+            }
+
+            return () => {
+                if (soundRef.current) {
+                    soundRef.current.stop(() => {
+                        soundRef.current.release();
+                    });
+                }
+            };
+        }, [])
+    );
+
+
 
     const fetchQuestions = async () => {
         try {
@@ -23,6 +50,22 @@ const PlayLQScreen = ({navigation}) => {
         } catch (error) {
             console.error('Error fetching questions:', error);
         }
+    };
+
+    const playSound = () => {
+        const sound = new Sound(require('../../../../assets/sound/sound_homescreen.mp3'), (error) => {
+            if (error) {
+                console.error('Error loading sound:', error);
+                return;
+            }
+            sound.setNumberOfLoops(-1);  // Lặp lại vô hạn
+            sound.play((success) => {
+                if (!success) {
+                    console.error('Sound playback failed');
+                }
+            });
+        });
+        soundRef.current = sound;
     };
 
     const renderQuestion = ({ item, index }) => {
