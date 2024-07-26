@@ -1,60 +1,49 @@
-import React, { useState, useCallback } from 'react';
+import React, { useCallback } from 'react';
 import { ImageBackground, Text, TouchableOpacity, View } from 'react-native';
 import Sound from 'react-native-sound';
 import { useFocusEffect } from '@react-navigation/native';
-import AsyncStorage from '@react-native-async-storage/async-storage';
 import styles from "./styleHome";
 
-// Cài đặt danh mục âm thanh
-Sound.setCategory('Playback');
-
 const HomeScreen = ({ navigation }) => {
-    const [sound, setSound] = useState(null); // Trạng thái âm thanh
-    const [volume, setVolume] = useState(1); // Trạng thái âm lượng
+    const soundRef = React.useRef(null);
 
-    // Hàm để tải âm thanh và phát nó
-    const playSound = async () => {
-        const soundPath = require('../../../assets/sound/sound_homescreen.mp3');
+    useFocusEffect(
+        useCallback(() => {
+            if (!soundRef.current) {
+                playSound();
+            } else {
+                soundRef.current.play((success) => {
+                    if (!success) {
+                        console.error('Sound playback failed');
+                    }
+                });
+            }
 
-        const newSound = new Sound(soundPath, '', (error) => {
+            return () => {
+                if (soundRef.current) {
+                    soundRef.current.stop(() => {
+                        soundRef.current.release();
+                    });
+                }
+            };
+        }, [])
+    );
+
+    const playSound = () => {
+        const sound = new Sound(require('../../../assets/sound/sound_homescreen.mp3'), Sound.MAIN_BUNDLE, (error) => {
             if (error) {
-                console.log('Failed to load the sound', error);
+                console.error('Error loading sound:', error);
                 return;
             }
-            newSound.setVolume(volume); 
-            newSound.setNumberOfLoops(-1); // Lặp lại vô hạn
-            newSound.play((success) => {
+            sound.setNumberOfLoops(-1);  // Lặp lại vô hạn
+            sound.play((success) => {
                 if (!success) {
-                    console.log('Playback failed due to audio decoding errors');
+                    console.error('Sound playback failed');
                 }
             });
         });
-        setSound(newSound);
+        soundRef.current = sound;
     };
-
-    // Hàm để tải âm lượng từ AsyncStorage và phát âm thanh
-    useFocusEffect(
-        useCallback(() => {
-            const loadVolume = async () => {
-                try {
-                    const storedVolume = await AsyncStorage.getItem('appVolume');
-                    // Giá trị mặc định là 1
-                    setVolume(storedVolume ? parseFloat(storedVolume) : 1); 
-                } catch (error) {
-                    console.error('Failed to fetch volume:', error);
-                }
-            };
-
-            loadVolume().then(playSound);
-
-            return () => {
-                if (sound) {
-                    // Dừng âm thanh và giải phóng tài nguyên khi màn hình không còn hiển thị
-                    sound.stop(() => sound.release()); 
-                }
-            };
-        }, [sound, volume])
-    );
 
     return (
         <View style={styles.container}>
