@@ -1,53 +1,11 @@
-import React, { useCallback, useRef } from 'react';
+import React from 'react';
 import { ImageBackground, Text, TouchableOpacity, View } from 'react-native';
-import Sound from 'react-native-sound';
-import { useFocusEffect } from '@react-navigation/native';
 import styles from "./styleHome";
+import soundManager from '../../SoundManager/soundManager';
 
 const HomeScreen = ({ navigation }) => {
 
-    const soundRef = useRef(null);
-
-    const playSound = () => {
-        if (soundRef.current) {
-            soundRef.current.play((success) => {
-                if (!success) {
-                    console.error('Sound playback failed');
-                    soundRef.current.reset();
-                    playSound();
-                }
-            });
-        } else {
-            const sound = new Sound(require('../../../assets/sound/sound_homescreen.mp3'), (error) => {
-                if (error) {
-                    console.error('Error loading sound:', error);
-                    return;
-                }
-                sound.setNumberOfLoops(-1);
-                soundRef.current = sound;
-                sound.play((success) => {
-                    if (!success) {
-                        console.error('Sound playback failed');
-                    }
-                });
-            });
-        }
-    };
-
-    useFocusEffect(
-        useCallback(() => {
-            playSound();
-
-            return () => {
-                if (soundRef.current) {
-                    soundRef.current.stop(() => {
-                        soundRef.current.release();
-                        soundRef.current = null;
-                    });
-                }
-            };
-        }, [])
-    );
+    soundManager('home_sound');
 
     return (
         <View style={styles.container}>

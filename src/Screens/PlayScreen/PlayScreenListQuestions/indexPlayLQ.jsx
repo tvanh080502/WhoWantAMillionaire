@@ -1,14 +1,14 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect } from 'react';
 import { ImageBackground, FlatList, Text, TouchableOpacity, View } from 'react-native';
-import Sound from 'react-native-sound';
-import { useFocusEffect } from '@react-navigation/native';
 import styles from './stylePlayLQ';
+import soundManager from '../../../SoundManager/soundManager';
 
 const PlayLQScreen = ({navigation}) => {
 
     const [questions, setQuestions] = useState([]);
     const [isLoading, setIsLoading] = useState(true);
-    const soundRef = React.useRef(null);
+
+    soundManager('playlq_sound');
 
     useEffect(() => {
         fetchQuestions();
@@ -25,47 +25,6 @@ const PlayLQScreen = ({navigation}) => {
             setIsLoading(false);
         } catch (error) {
             console.error('Error fetching questions:', error);
-        }
-    };
-
-    useFocusEffect(
-        useCallback(() => {
-            playSound();
-
-            return () => {
-                if (soundRef.current) {
-                    soundRef.current.stop(() => {
-                        soundRef.current.release();
-                        soundRef.current = null;
-                    });
-                }
-            };
-        }, [])
-    );
-
-    const playSound = () => {
-        if (soundRef.current) {
-            soundRef.current.play((success) => {
-                if (!success) {
-                    console.error('Sound playback failed');
-                    soundRef.current.reset();
-                    playSound();
-                }
-            });
-        } else {
-            const sound = new Sound(require('../../../../assets/sound/sound_playscreenlq.mp3'), (error) => {
-                if (error) {
-                    console.error('Error loading sound:', error);
-                    return;
-                }
-                sound.setNumberOfLoops(-1);
-                soundRef.current = sound;
-                sound.play((success) => {
-                    if (!success) {
-                        console.error('Sound playback failed');
-                    }
-                });
-            });
         }
     };
 

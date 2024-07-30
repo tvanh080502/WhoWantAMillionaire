@@ -4,6 +4,7 @@ import { View, Text, TouchableOpacity, ActivityIndicator, ImageBackground, Modal
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import Sound from 'react-native-sound';
 import styles from './stylePlayQA';
+import soundManager from '../../../SoundManager/soundManager';
 
 // Cài đặt danh mục âm thanh
 Sound.setCategory('Playback');
@@ -29,24 +30,10 @@ const PlayQAScreen = ({ navigation }) => {
     const [showNextButton, setShowNextButton] = useState(false); // Trạng thái hiển thị nút "Câu hỏi tiếp theo"
     const [answerColor, setAnswerColor] = useState(null); // Trạng thái màu sắc của đáp án được chọn
 
-    const soundRef = useRef(null);
     const fadeAnim = useRef(new Animated.Value(1)).current; // Giá trị hoạt ảnh
 
-    // Hook để phát âm thanh
-    useFocusEffect(
-        useCallback(() => {
-            playSound();
-
-            return () => {
-                if (soundRef.current) {
-                    soundRef.current.stop(() => {
-                        soundRef.current.release();
-                        soundRef.current = null;
-                    });
-                }
-            };
-        }, [])
-    );
+    // Phát âm thanh
+    soundManager('playqa_sound');
 
     // Hook đếm ngược và kiếm tra trạng thái đang chạy của thời gian đếm ngược
     useEffect(() => {
@@ -281,35 +268,7 @@ const PlayQAScreen = ({ navigation }) => {
     const handleWrongAnswerGame = () => {
         setmodalWrongAnswer(false);
     };
-
-    // Hàm để tải âm thanh và phát nó
-    const playSound = () => {
-        if (soundRef.current) {
-            soundRef.current.play((success) => {
-                if (!success) {
-                    console.error('Sound playback failed');
-                    soundRef.current.reset();
-                    playSound();
-                }
-            });
-        } else {
-            const sound = new Sound(require('../../../../assets/sound/sound_playscreenqa.mp3'), (error) => {
-                if (error) {
-                    console.error('Error loading sound:', error);
-                    return;
-                }
-                sound.setNumberOfLoops(-1);
-                soundRef.current = sound;
-                sound.play((success) => {
-                    if (!success) {
-                        console.error('Sound playback failed');
-                    }
-                });
-            });
-        }
-    };
     
-
     if (isLoading) {
         return <ActivityIndicator size="large" color="#0000ff" />;
     }
