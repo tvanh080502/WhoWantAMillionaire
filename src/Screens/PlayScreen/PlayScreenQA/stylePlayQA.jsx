@@ -151,6 +151,9 @@ const styles = StyleSheet.create({
         fontSize: 18,
         color: '#333',
     },
+    orangeAnswer: {
+        backgroundColor: 'ff8d21',
+    },
     correctAnswer: {
         backgroundColor: '#06D001',
     },
