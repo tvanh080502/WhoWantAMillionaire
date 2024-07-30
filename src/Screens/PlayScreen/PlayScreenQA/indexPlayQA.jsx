@@ -1,13 +1,9 @@
-import React, { useState, useEffect, useCallback, useRef } from 'react';
-import { useFocusEffect } from '@react-navigation/native';
+import React, { useState, useEffect, useRef, useContext } from 'react';
 import { View, Text, TouchableOpacity, ActivityIndicator, ImageBackground, Modal, Animated } from 'react-native';
-import AsyncStorage from '@react-native-async-storage/async-storage';
 import Sound from 'react-native-sound';
 import styles from './stylePlayQA';
 import soundManager from '../../../SoundManager/soundManager';
-
-// Cài đặt danh mục âm thanh
-Sound.setCategory('Playback');
+import volumeManager from '../../../SoundManager/volumeManager';
 
 const PlayQAScreen = ({ navigation }) => {
     const [isLoading, setIsLoading] = useState(true); //Trạng thái loading
@@ -33,7 +29,13 @@ const PlayQAScreen = ({ navigation }) => {
     const fadeAnim = useRef(new Animated.Value(1)).current; // Giá trị hoạt ảnh
 
     // Phát âm thanh
-    soundManager('playqa_sound');
+    const { volume } = useContext(volumeManager)
+    const soundRef = soundManager('playqa_sound');
+    useEffect(() => {
+        if (soundRef.current) {
+            soundRef.current.setVolume(volume);
+        }
+    }, [volume]);
 
     // Hook đếm ngược và kiếm tra trạng thái đang chạy của thời gian đếm ngược
     useEffect(() => {
@@ -139,20 +141,32 @@ const PlayQAScreen = ({ navigation }) => {
                 console.error('Error loading correct sound:', error);
                 return;
             }
-            sound.play();
+            sound.setVolume(volume); // Đặt âm lượng trước khi phát
+            sound.play((success) => {
+                if (!success) {
+                    console.error('Sound playback failed for correct sound');
+                }
+                sound.release(); // Giải phóng âm thanh sau khi phát
+            });
         });
     };
-
-    // Hàm playWrongSound để phát âm thanh sai
+    
     const playWrongSound = () => {
         const sound = new Sound(require('../../../../assets/sound/sound_wrong_answer.mp3'), (error) => {
             if (error) {
                 console.error('Error loading incorrect sound:', error);
                 return;
             }
-            sound.play();
+            sound.setVolume(volume); // Đặt âm lượng trước khi phát
+            sound.play((success) => {
+                if (!success) {
+                    console.error('Sound playback failed for wrong sound');
+                }
+                sound.release(); // Giải phóng âm thanh sau khi phát
+            });
         });
     };
+    
 
     // Hàm kiểm tra các trạng thái khi trả lời câu hỏi
     const handleAnswerPress = (answerId, isCorrect) => {

@@ -1,9 +1,11 @@
-import { useCallback, useRef } from 'react';
+import { useCallback, useRef, useContext, useEffect } from 'react';
 import Sound from 'react-native-sound';
 import { useFocusEffect } from '@react-navigation/native';
+import VolumeContext from './volumeManager';
 
 const soundManager = (screenName) => {
     const soundRef = useRef(null);
+    const { volume } = useContext(VolumeContext);
 
     const soundFiles = {
         home_sound: require('../../assets/sound/sound_homescreen.mp3'),
@@ -11,31 +13,42 @@ const soundManager = (screenName) => {
         playqa_sound: require('../../assets/sound/sound_playscreenqa.mp3'),
     };
 
-    const playSound = (soundFile) => {
+    const playSound = useCallback((soundFile) => {
         if (soundRef.current) {
-            soundRef.current.play((success) => {
-                if (!success) {
-                    console.error('Sound playback failed');
-                    soundRef.current.reset();
-                    playSound(soundFile);
+            soundRef.current.stop(() => {
+                if (soundRef.current) {
+                    soundRef.current.release();
                 }
+                soundRef.current = new Sound(soundFile, (error) => {
+                    if (error) {
+                        console.error('Error loading sound:', error);
+                        return;
+                    }
+                    soundRef.current.setNumberOfLoops(-1);
+                    soundRef.current.setVolume(volume);
+                    soundRef.current.play((success) => {
+                        if (!success) {
+                            console.error('Sound playback failed');
+                        }
+                    });
+                });
             });
         } else {
-            const sound = new Sound(soundFile, (error) => {
+            soundRef.current = new Sound(soundFile, (error) => {
                 if (error) {
                     console.error('Error loading sound:', error);
                     return;
                 }
-                sound.setNumberOfLoops(-1);
-                soundRef.current = sound;
-                sound.play((success) => {
+                soundRef.current.setNumberOfLoops(-1);
+                soundRef.current.setVolume(volume);
+                soundRef.current.play((success) => {
                     if (!success) {
                         console.error('Sound playback failed');
                     }
                 });
             });
         }
-    };
+    }, [volume]);
 
     useFocusEffect(
         useCallback(() => {
@@ -49,13 +62,21 @@ const soundManager = (screenName) => {
             return () => {
                 if (soundRef.current) {
                     soundRef.current.stop(() => {
-                        soundRef.current.release();
-                        soundRef.current = null;
+                        if (soundRef.current) {
+                            soundRef.current.release();
+                            soundRef.current = null;
+                        }
                     });
                 }
             };
-        }, [screenName])
+        }, [screenName, playSound, soundFiles])
     );
+
+    useEffect(() => {
+        if (soundRef.current) {
+            soundRef.current.setVolume(volume);
+        }
+    }, [volume]);
 
     return soundRef;
 };

@@ -1,11 +1,13 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import { ImageBackground, Text, TouchableOpacity, View } from 'react-native';
 import styles from "./styleHome";
 import soundManager from '../../SoundManager/soundManager';
+import volumeManager from '../../SoundManager/volumeManager';
 
 const HomeScreen = ({ navigation }) => {
 
-    soundManager('home_sound');
+    const { volume } = useContext(volumeManager)
+    soundManager('home_sound', volume);
 
     return (
         <View style={styles.container}>

@@ -7,45 +7,48 @@ import PlayLQScreen from '../Screens/PlayScreen/PlayScreenListQuestions/indexPla
 import PlayQAScreen from '../Screens/PlayScreen/PlayScreenQA/indexPlayQA';
 import HighscoreScreen from '../Screens/HighscoreScreen/indexHighscore';
 import SettingScreen from '../Screens/SettingScreen/indexSetting';
+import { VolumeProvider } from '../SoundManager/volumeManager';
 
 const Stack = createStackNavigator();
 
 const Router = () => {
   return (
-    <NavigationContainer>
-      <Stack.Navigator initialRouteName="Home">
-        <Stack.Screen 
-            name="Home" 
-            component={HomeScreen} 
-            options={{ headerShown: false }} 
-        />
-        <Stack.Screen 
-            name="Rule" 
-            component={RuleScreen} 
-            options={{ headerShown: false }} 
-        />
-        <Stack.Screen 
-            name="PlayLQ" 
-            component={PlayLQScreen} 
-            options={{ headerShown: false }} 
-        />
-        <Stack.Screen 
-            name="PlayQA" 
-            component={PlayQAScreen} 
-            options={{ headerShown: false }} 
-        />
-        <Stack.Screen 
-            name="Highscore" 
-            component={HighscoreScreen} 
-            options={{ headerShown: false }} 
-        />
-        <Stack.Screen 
-            name="Setting" 
-            component={SettingScreen} 
-            options={{ headerShown: false }} 
-        />
-      </Stack.Navigator>
-    </NavigationContainer>
+    <VolumeProvider>
+      <NavigationContainer>
+        <Stack.Navigator initialRouteName="Home">
+          <Stack.Screen 
+              name="Home" 
+              component={HomeScreen} 
+              options={{ headerShown: false }} 
+          />
+          <Stack.Screen 
+              name="Rule" 
+              component={RuleScreen} 
+              options={{ headerShown: false }} 
+          />
+          <Stack.Screen 
+              name="PlayLQ" 
+              component={PlayLQScreen} 
+              options={{ headerShown: false }} 
+          />
+          <Stack.Screen 
+              name="PlayQA" 
+              component={PlayQAScreen} 
+              options={{ headerShown: false }} 
+          />
+          <Stack.Screen 
+              name="Highscore" 
+              component={HighscoreScreen} 
+              options={{ headerShown: false }} 
+          />
+          <Stack.Screen 
+              name="Setting" 
+              component={SettingScreen} 
+              options={{ headerShown: false }} 
+          />
+        </Stack.Navigator>
+      </NavigationContainer>
+    </VolumeProvider>
   );
 };
 

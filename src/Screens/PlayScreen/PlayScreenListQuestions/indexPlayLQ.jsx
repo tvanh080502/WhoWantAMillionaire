@@ -1,14 +1,16 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import { ImageBackground, FlatList, Text, TouchableOpacity, View } from 'react-native';
 import styles from './stylePlayLQ';
 import soundManager from '../../../SoundManager/soundManager';
+import volumeManager from '../../../SoundManager/volumeManager';
 
 const PlayLQScreen = ({navigation}) => {
 
     const [questions, setQuestions] = useState([]);
     const [isLoading, setIsLoading] = useState(true);
 
-    soundManager('playlq_sound');
+    const { volume } = useContext(volumeManager)
+    soundManager('playlq_sound', volume);
 
     useEffect(() => {
         fetchQuestions();

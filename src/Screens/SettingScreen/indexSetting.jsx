@@ -1,11 +1,26 @@
-import React, { useState } from 'react';
+import React, { useEffect, useContext } from 'react';
 import { View, Text, TouchableOpacity, ImageBackground } from 'react-native';
 import Slider from '@react-native-community/slider';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import VolumeContext from '../../SoundManager/volumeManager';
 import styles from './styleSetting';
 
 const SettingScreen = ({ navigation }) => {
-    const [volume, setVolume] = useState(1);
+    const { volume, setVolume } = useContext(VolumeContext);
+
+    useEffect(() => {
+        const loadVolume = async () => {
+            try {
+                const savedVolume = await AsyncStorage.getItem('appVolume');
+                if (savedVolume !== null) {
+                    setVolume(parseFloat(savedVolume));
+                }
+            } catch (error) {
+                console.error('Failed to load volume:', error);
+            }
+        };
+        loadVolume();
+    }, [setVolume]);
 
     const handleVolumeChange = async (value) => {
         setVolume(value);
