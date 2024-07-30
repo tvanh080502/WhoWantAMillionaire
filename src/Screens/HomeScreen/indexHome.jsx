@@ -1,13 +1,31 @@
-import React, { useContext } from 'react';
+import React, { useContext, useEffect } from 'react';
 import { ImageBackground, Text, TouchableOpacity, View } from 'react-native';
 import styles from "./styleHome";
 import soundManager from '../../SoundManager/soundManager';
-import volumeManager from '../../SoundManager/volumeManager';
+import VolumeContext from '../../SoundManager/volumeManager';
 
 const HomeScreen = ({ navigation }) => {
+    const { volume } = useContext(VolumeContext);
+    const soundRef = soundManager('home_sound');
 
-    const { volume } = useContext(volumeManager)
-    soundManager('home_sound', volume);
+    useEffect(() => {
+        // Set the volume when the component mounts
+        if (soundRef.current) {
+            soundRef.current.setVolume(volume);
+        }
+
+        // Cleanup sound when component unmounts
+        return () => {
+            if (soundRef.current) {
+                soundRef.current.stop(() => {
+                    if (soundRef.current) {
+                        soundRef.current.release();
+                        soundRef.current = null;
+                    }
+                });
+            }
+        };
+    }, [volume]);
 
     return (
         <View style={styles.container}>

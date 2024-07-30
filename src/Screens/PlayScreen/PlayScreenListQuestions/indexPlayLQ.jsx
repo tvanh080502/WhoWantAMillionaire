@@ -2,19 +2,36 @@ import React, { useState, useEffect, useContext } from 'react';
 import { ImageBackground, FlatList, Text, TouchableOpacity, View } from 'react-native';
 import styles from './stylePlayLQ';
 import soundManager from '../../../SoundManager/soundManager';
-import volumeManager from '../../../SoundManager/volumeManager';
+import VolumeContext from '../../../SoundManager/volumeManager';
 
-const PlayLQScreen = ({navigation}) => {
-
+const PlayLQScreen = ({ navigation }) => {
     const [questions, setQuestions] = useState([]);
     const [isLoading, setIsLoading] = useState(true);
 
-    const { volume } = useContext(volumeManager)
-    soundManager('playlq_sound', volume);
+    const { volume } = useContext(VolumeContext);
+    const soundRef = soundManager('playlq_sound');
 
     useEffect(() => {
         fetchQuestions();
+
+        // Cleanup sound when component unmounts
+        return () => {
+            if (soundRef.current) {
+                soundRef.current.stop(() => {
+                    if (soundRef.current) {
+                        soundRef.current.release();
+                        soundRef.current = null;
+                    }
+                });
+            }
+        };
     }, []);
+
+    useEffect(() => {
+        if (soundRef.current) {
+            soundRef.current.setVolume(volume);
+        }
+    }, [volume]);
 
     const fetchQuestions = async () => {
         try {
@@ -48,29 +65,29 @@ const PlayLQScreen = ({navigation}) => {
     return (
         <View style={styles.container}>
             <View style={styles.header}>
-                <TouchableOpacity 
-                style={styles.nextbutton}
-                onPress={() => navigation.navigate('Home')}>
+                <TouchableOpacity
+                    style={styles.nextbutton}
+                    onPress={() => navigation.navigate('Home')}>
                     <ImageBackground
                         source={require('../../../../assets/icon/back.png')}
                         style={styles.iconimage}
                     >
                     </ImageBackground>
                 </TouchableOpacity>
-                <View style={styles.headertext}> 
+                <View style={styles.headertext}>
                     <Text style={styles.textheader}>Trở về</Text>
                     <Text style={styles.textheader}>Bắt đầu</Text>
                 </View>
-                <TouchableOpacity 
-                style={styles.nextbutton}
-                onPress={() => navigation.navigate('PlayQA')}>
+                <TouchableOpacity
+                    style={styles.nextbutton}
+                    onPress={() => navigation.navigate('PlayQA')}>
                     <ImageBackground
                         source={require('../../../../assets/icon/next.png')}
                         style={styles.iconimage}
                     >
                     </ImageBackground>
                 </TouchableOpacity>
-            </View> 
+            </View>
             <View style={styles.viewlist}>
                 {isLoading ? (
                     <Text>Đang tải câu hỏi...</Text>

@@ -3,7 +3,7 @@ import { View, Text, TouchableOpacity, ActivityIndicator, ImageBackground, Modal
 import Sound from 'react-native-sound';
 import styles from './stylePlayQA';
 import soundManager from '../../../SoundManager/soundManager';
-import volumeManager from '../../../SoundManager/volumeManager';
+import VolumeContext from '../../../SoundManager/volumeManager';
 
 const PlayQAScreen = ({ navigation }) => {
     const [isLoading, setIsLoading] = useState(true); //Trạng thái loading
@@ -29,13 +29,18 @@ const PlayQAScreen = ({ navigation }) => {
     const fadeAnim = useRef(new Animated.Value(1)).current; // Giá trị hoạt ảnh
 
     // Phát âm thanh
-    const { volume } = useContext(volumeManager)
+    const { volume } = useContext(VolumeContext)
     const soundRef = soundManager('playqa_sound');
+    const backgroundSoundRef = useRef(null);
+
     useEffect(() => {
         if (soundRef.current) {
             soundRef.current.setVolume(volume);
         }
+        // Thiết lập âm thanh nền
+        backgroundSoundRef.current = soundRef.current;
     }, [volume]);
+    
 
     // Hook đếm ngược và kiếm tra trạng thái đang chạy của thời gian đếm ngược
     useEffect(() => {
@@ -132,42 +137,58 @@ const PlayQAScreen = ({ navigation }) => {
             }
         });
     };
-     
     
     // Hàm playCorrectSound để phát âm thanh đúng
     const playCorrectSound = () => {
+        if (backgroundSoundRef.current) {
+            backgroundSoundRef.current.stop();
+        }
+    
         const sound = new Sound(require('../../../../assets/sound/sound_correct_answer.mp3'), (error) => {
             if (error) {
                 console.error('Error loading correct sound:', error);
                 return;
             }
-            sound.setVolume(volume); // Đặt âm lượng trước khi phát
+            sound.setVolume(volume);
             sound.play((success) => {
                 if (!success) {
                     console.error('Sound playback failed for correct sound');
                 }
-                sound.release(); // Giải phóng âm thanh sau khi phát
+                sound.release();
+    
+                // Phát lại âm thanh nền
+                if (backgroundSoundRef.current) {
+                    backgroundSoundRef.current.play();
+                }
             });
         });
     };
     
     const playWrongSound = () => {
+        if (backgroundSoundRef.current) {
+            backgroundSoundRef.current.stop();
+        }
+    
         const sound = new Sound(require('../../../../assets/sound/sound_wrong_answer.mp3'), (error) => {
             if (error) {
                 console.error('Error loading incorrect sound:', error);
                 return;
             }
-            sound.setVolume(volume); // Đặt âm lượng trước khi phát
+            sound.setVolume(volume);
             sound.play((success) => {
                 if (!success) {
                     console.error('Sound playback failed for wrong sound');
                 }
-                sound.release(); // Giải phóng âm thanh sau khi phát
+                sound.release();
+    
+                // Phát lại âm thanh nền
+                if (backgroundSoundRef.current) {
+                    backgroundSoundRef.current.play();
+                }
             });
         });
     };
     
-
     // Hàm kiểm tra các trạng thái khi trả lời câu hỏi
     const handleAnswerPress = (answerId, isCorrect) => {
         if (selectedAnswer === null && seconds > 0) {
