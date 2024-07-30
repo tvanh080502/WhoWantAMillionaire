@@ -128,11 +128,18 @@ const PlayQAScreen = ({ navigation }) => {
             }
         ).start(() => {
             if (isCorrect) {
-                setScore((prevScore) => prevScore + 100); // Cộng điểm khi nhấp nháy kết thúc
+                if ((currentQuestionIndex + 1) % 5 !== 0) { 
+                    setScore((prevScore) => prevScore + 100); // Cộng điểm khi nhấp nháy kết thúc
+                } else {
+                    setScore((prevScore) => prevScore + 300); // Cộng điểm khi nhấp nháy kết thúc
+                }
             }
             setShowNextButton(true); // Hiển thị nút "Câu hỏi tiếp theo" sau khi nhấp nháy kết thúc
             // Hiển thị modal sau khi nhấp nháy kết thúc nếu đáp án sai
             if (!isCorrect) {
+                sethelp50(false);
+                sethelpcallfriend(false);
+                sethelpvote(false);
                 setTimeout(handleShowWrongAnswerModal, 500); // Thời gian chờ thêm để chắc chắn nhấp nháy kết thúc
             }
         });
@@ -196,11 +203,7 @@ const PlayQAScreen = ({ navigation }) => {
             setIsAnswerCorrect(isCorrect);
             settimerRunning(false);
             setAnswerColor('orange'); 
-            if (!isCorrect) {
-                sethelp50(false);
-                sethelpcallfriend(false);
-                sethelpvote(false);
-            }
+        
             setTimeout(() => {
                 if (isCorrect) {
                     playCorrectSound();

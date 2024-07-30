@@ -47,8 +47,14 @@ const PlayLQScreen = ({ navigation }) => {
         }
     };
 
-    const renderQuestion = ({ item, index }) => {
-        const points = (index + 1) * 100;
+    const renderQuestion = ({ item, index}) => {
+        
+        let points = 0;
+        for (let i = 0; i < index; i++) {
+            points += (i + 1) % 5 === 0 ? 300 : 100;
+        }
+        points += (index + 1) % 5 === 0 ? 300 : 100;
+
         return (
             <View key={item.id} style={styles.QA}>
                 <Text style={styles.textid}>{item.id}</Text>
