@@ -53,7 +53,7 @@ const PlayLQScreen = ({navigation}) => {
                 }
             });
         } else {
-            const sound = new Sound(require('../../../../assets/sound/sound_homescreen.mp3'), (error) => {
+            const sound = new Sound(require('../../../../assets/sound/sound_playscreenlq.mp3'), (error) => {
                 if (error) {
                     console.error('Error loading sound:', error);
                     return;
