@@ -156,8 +156,8 @@ const PlayQAScreen = ({ navigation }) => {
         });
     };
 
-    // Hàm playIncorrectSound để phát âm thanh sai
-    const playIncorrectSound = () => {
+    // Hàm playWrongSound để phát âm thanh sai
+    const playWrongSound = () => {
         const sound = new Sound(require('../../../../assets/sound/sound_wrong_answer.mp3'), (error) => {
             if (error) {
                 console.error('Error loading incorrect sound:', error);
@@ -184,7 +184,7 @@ const PlayQAScreen = ({ navigation }) => {
                     playCorrectSound();
                     setAnswerColor(styles.correctAnswer.backgroundColor); // Đổi màu đáp án thành xanh khi bắt đầu nhấp nháy
                 } else {
-                    playIncorrectSound();
+                    playWrongSound();
                     setAnswerColor(styles.wrongAnswer.backgroundColor); // Đổi màu đáp án thành đỏ khi bắt đầu nhấp nháy
                 }
                 blinkAnswer(isCorrect);
