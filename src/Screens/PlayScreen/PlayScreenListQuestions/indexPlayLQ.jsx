@@ -14,30 +14,6 @@ const PlayLQScreen = ({navigation}) => {
         fetchQuestions();
     }, []);
 
-    useFocusEffect(
-        useCallback(() => {
-            if (!soundRef.current) {
-                playSound();
-            } else {
-                soundRef.current.play((success) => {
-                    if (!success) {
-                        console.error('Sound playback failed');
-                    }
-                });
-            }
-
-            return () => {
-                if (soundRef.current) {
-                    soundRef.current.stop(() => {
-                        soundRef.current.release();
-                    });
-                }
-            };
-        }, [])
-    );
-
-
-
     const fetchQuestions = async () => {
         try {
             const response = await fetch('http://10.0.2.2:3000/api/questions');
@@ -52,20 +28,45 @@ const PlayLQScreen = ({navigation}) => {
         }
     };
 
+    useFocusEffect(
+        useCallback(() => {
+            playSound();
+
+            return () => {
+                if (soundRef.current) {
+                    soundRef.current.stop(() => {
+                        soundRef.current.release();
+                        soundRef.current = null;
+                    });
+                }
+            };
+        }, [])
+    );
+
     const playSound = () => {
-        const sound = new Sound(require('../../../../assets/sound/sound_homescreen.mp3'), (error) => {
-            if (error) {
-                console.error('Error loading sound:', error);
-                return;
-            }
-            sound.setNumberOfLoops(-1);  // Lặp lại vô hạn
-            sound.play((success) => {
+        if (soundRef.current) {
+            soundRef.current.play((success) => {
                 if (!success) {
                     console.error('Sound playback failed');
+                    soundRef.current.reset();
+                    playSound();
                 }
             });
-        });
-        soundRef.current = sound;
+        } else {
+            const sound = new Sound(require('../../../../assets/sound/sound_homescreen.mp3'), (error) => {
+                if (error) {
+                    console.error('Error loading sound:', error);
+                    return;
+                }
+                sound.setNumberOfLoops(-1);
+                soundRef.current = sound;
+                sound.play((success) => {
+                    if (!success) {
+                        console.error('Sound playback failed');
+                    }
+                });
+            });
+        }
     };
 
     const renderQuestion = ({ item, index }) => {
