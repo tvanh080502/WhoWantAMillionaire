@@ -49,13 +49,13 @@ export const getQuestion = async (questionKey, t) => {
   };
 
   const url = `https://${t('host_url')}/game/get-question/${questionKey}`;
-  console.log('Request URL:', url);
-  console.log('Request Options:', requestOptions);
+  // console.log('Request URL:', url);
+  // console.log('Request Options:', requestOptions);
 
   try {
     const response = await fetch(url, requestOptions);
     if (!response.ok) {
-      throw new Error(`HTTP error! status: ${response.status}`);
+      // throw new Error(`HTTP error! status: ${response.status}`);
     }
     
     // Trích xuất dữ liệu từ phản hồi
@@ -64,11 +64,11 @@ export const getQuestion = async (questionKey, t) => {
       ...extractTokenFromResponse(response)
     };
 
-    console.log('Extracted result:', result); // Log kết quả để kiểm tra
+    // console.log('Extracted result:', result); // Log kết quả để kiểm tra
 
     return result;
   } catch (error) {
-    console.error('[API] getQuestion error:', error);
+    // console.error('[API] getQuestion error:', error);
     return undefined;
   }
 };
