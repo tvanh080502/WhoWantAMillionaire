@@ -49,24 +49,26 @@ export const getQuestion = async (questionKey, t) => {
   };
 
   const url = `https://${t('host_url')}/game/get-question/${questionKey}`;
-  // console.log('Request URL:', url);
-  // console.log('Request Options:', requestOptions);
+  console.log('Request URL:', url);
+  console.log('Request Options:', requestOptions);
 
   try {
     const response = await fetch(url, requestOptions);
     if (!response.ok) {
-      // throw new Error(`HTTP error! status: ${response.status}`);
+      throw new Error(`HTTP error! status: ${response.status}`);
     }
+    
+    // Trích xuất dữ liệu từ phản hồi
     const result = {
       question: await response.json(),
       ...extractTokenFromResponse(response)
     };
 
-    //console.log('Extracted result:', result); // Log kết quả để kiểm tra
+    console.log('Extracted result:', result); // Log kết quả để kiểm tra
 
     return result;
   } catch (error) {
-    //console.error('[API] getQuestion error:', error);
+    console.error('[API] getQuestion error:', error);
     return undefined;
   }
 };
@@ -87,7 +89,7 @@ export const getCorrectedAnswer = async (question, t, token, sessionCookie) => {
       credentials: 'include'
     };
 
-    const url = `https://${t('host_url')}/game/get-answer`;
+    const url = `https://${('host_url')}/game/get-answer`;
 
     // console.log('Request URL:', url);
     // console.log('Request Options:', requestOptions);
@@ -131,7 +133,7 @@ export const getHelp50 = async (question, t, token) => {
       credentials: 'include'
     };
 
-    const url = `https://${t('host_url')}/game/get-help/h5050`;
+    const url = `https://${('host_url')}/game/get-help/h5050`;
     // console.log('Request URL:', url);
     // console.log('Request Options:', requestOptions);
 
@@ -180,7 +182,7 @@ export const getHelpHall = async (question, t, token) => {
       body: raw
     };
 
-    const url = `https://${t('host_url')}/game/get-help/hallHelp`;
+    const url = `https://${('host_url')}/game/get-help/hallHelp`;
     // console.log('Request URL:', url);
     // console.log('Request Options:', requestOptions);
 
@@ -220,7 +222,7 @@ export const getHelpCallFriend = async (question, t, token) => {
 
     };
 
-    let url = `https://${t('host_url')}/game/get-help/call-friend`;
+    let url = `https://${('host_url')}/game/get-help/call-friend`;
     // console.log('[API] getHelpCallFriend: ', { url, raw });
 
     const response = await fetch(url, requestOptions);
