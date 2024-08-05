@@ -45,7 +45,6 @@ export const getQuestion = async (questionKey, t) => {
   const requestOptions = {
     method: 'GET',
     headers: myHeaders,
-    credentials: 'include'
   };
 
   const url = `https://${t('host_url')}/game/get-question/${questionKey}`;
@@ -86,7 +85,6 @@ export const getCorrectedAnswer = async (question, t, token, sessionCookie) => {
         'Cookie': `wwbm_session=${sessionCookie}` 
       },
       body: JSON.stringify({ question }),
-      credentials: 'include'
     };
 
     const url = `https://${('host_url')}/game/get-answer`;
@@ -130,7 +128,6 @@ export const getHelp50 = async (question, t, token) => {
       method: 'POST',
       headers: myHeaders,
       body: raw,
-      credentials: 'include'
     };
 
     const url = `https://${('host_url')}/game/get-help/h5050`;

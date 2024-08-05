@@ -3,7 +3,7 @@ import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 import HomeScreen from '../Screens/HomeScreen/indexHome';
 import RuleScreen from '../Screens/RuleScreen/indexRule'
-import PlayLQScreen from '../Screens/PlayScreen/PlayScreenListQuestions/indexPlayLQ';
+import PlayLQScreen from '../Screens/PlayScreen/PlayScreenLQ/indexPlayLQ';
 import PlayQAScreen from '../Screens/PlayScreen/PlayScreenQA/indexPlayQA';
 import HighscoreScreen from '../Screens/HighscoreScreen/indexHighscore';
 import SettingScreen from '../Screens/SettingScreen/indexSetting';
