@@ -1,6 +1,10 @@
 import { useCallback, useRef, useContext, useEffect } from 'react';
 import Sound from 'react-native-sound';
 import VolumeContext from './volumeManager';
+// Import từng tệp âm thanh
+import homeSound from '../../assets/sound/sound_homescreen.mp3';
+import playlqSound from '../../assets/sound/sound_playscreenlq.mp3';
+import playqaSound from '../../assets/sound/sound_playscreenqa.mp3';
 
 Sound.setCategory('Playback');
 
@@ -9,17 +13,18 @@ const soundManager = (screenName) => {
     const { volume } = useContext(VolumeContext);
 
     const soundFiles = {
-        home_sound: require('../../assets/sound/sound_homescreen.mp3'),
-        playlq_sound: require('../../assets/sound/sound_playscreenlq.mp3'),
-        playqa_sound: require('../../assets/sound/sound_playscreenqa.mp3'),
+        home_sound: homeSound,
+        playlq_sound: playlqSound,
+        playqa_sound: playqaSound,
     };
 
     const loadAndPlaySound = (soundFile) => {
-        soundRef.current = new Sound(soundFile, (error) => {
+        const sound = new Sound(soundFile, (error) => {
             if (error) {
-                console.error('Error loading sound:', error);
+                console.error('Error loading sound:', error.message);
                 return;
             }
+            soundRef.current = sound; // Gán giá trị khi âm thanh đã sẵn sàng
             soundRef.current.setNumberOfLoops(-1);
             soundRef.current.setVolume(volume);
             soundRef.current.play((success) => {
@@ -33,16 +38,20 @@ const soundManager = (screenName) => {
     };
 
     const playSound = useCallback((soundFile) => {
-        if (soundRef.current) {
-            soundRef.current.stop(() => {
-                if (soundRef.current) {
-                    soundRef.current.release();
-                    soundRef.current = null;
-                    loadAndPlaySound(soundFile);
-                }
-            });
-        } else {
-            loadAndPlaySound(soundFile);
+        try {
+            if (soundRef.current) {
+                soundRef.current.stop(() => {
+                    if (soundRef.current) {
+                        soundRef.current.release();
+                        soundRef.current = null;
+                        loadAndPlaySound(soundFile);
+                    }
+                });
+            } else {
+                loadAndPlaySound(soundFile);
+            }
+        } catch (error) {
+            console.error('Error playing sound:', error);
         }
     }, [volume]);
 
