@@ -64,7 +64,7 @@ export const getQuestion = async (questionKey) => {
 
     const { token, sessionCookie } = extractTokenFromResponse(response);
 
-    console.log('Extracted result:', { question: questionData, token, sessionCookie });
+    // console.log('Extracted result:', { question: questionData, token, sessionCookie });
     return { question: questionData, token, sessionCookie };
   } catch (error) {
     console.error('[API] getQuestion error:', error);
@@ -162,7 +162,7 @@ export const getHelpHall = async (question, token) => {
     const requestOptions = {
       method: 'POST',
       headers: myHeaders,
-      body: raw
+      body: raw,
     };
 
     const url = `https://wwbm.com/game/get-help/hallHelp`;
@@ -175,18 +175,29 @@ export const getHelpHall = async (question, token) => {
     }
 
     const text = await response.text();
-    console.log('Response Text:', text);
+    console.log('Response Text:', text); // Log phản hồi để kiểm tra
 
-    return JSON.parse(text);
+    // Sử dụng regex để trích xuất phần trăm
+    const regex = /<div class="procent">([\d.]+) %<\/br>([A-D])<\/div>/g;
+    let match;
+    const percentages = [];
+
+    while ((match = regex.exec(text)) !== null) {
+      percentages.push({ label: match[2], percent: parseFloat(match[1]) });
+    }
+
+    console.log('Parsed Percentages:', percentages);
+
+    return percentages;
   } catch (error) {
-    console.error('[API] getHelpHall failed: ', error);
+    console.error('[API] getHelpHall failed:', error);
     return null;
   }
 };
 
 export const getHelpCallFriend = async (question, token) => {
   try {
-    const formattedQuestion = formatQuestion(question);
+    const formattedQuestion = formatQuestion(question); // Đảm bảo câu hỏi được định dạng đúng
 
     const myHeaders = new Headers({
       'Accept': 'application/json, text/plain, */*',
@@ -213,11 +224,21 @@ export const getHelpCallFriend = async (question, token) => {
     }
 
     const text = await response.text();
-    console.log('Response Text:', text);
+    console.log('Response Text:', text); // Log phản hồi để kiểm tra
 
-    return JSON.parse(text);
+    // Sử dụng regex để trích xuất hội thoại
+    const regex = /<span>Your friend says: “([^”]+)”<\/span>/;
+    const match = text.match(regex);
+
+    let friendAdvice = match ? match[1] : "No advice available.";
+    // Loại bỏ dấu ngoặc đặc biệt
+    friendAdvice = friendAdvice.replace(/[«»]/g, ''); // Loại bỏ dấu ngoặc kép kiểu Pháp
+
+    console.log('Friend Advice:', friendAdvice);
+
+    return friendAdvice;
   } catch (error) {
-    console.error('[API] getHelpCallFriend failed: ', error);
+    console.error('[API] getHelpCallFriend failed:', error);
     return null;
   }
 };
