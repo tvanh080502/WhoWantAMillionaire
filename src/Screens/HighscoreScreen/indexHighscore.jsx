@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, FlatList, ActivityIndicator, TouchableOpacity, ImageBackground } from 'react-native';
+import LinearGradient from 'react-native-linear-gradient';
 import styles from './styleHighscore';
 
-const HighscoreScreen = ({navigation}) => {
+const HighscoreScreen = ({ navigation }) => {
     const [isLoading, setIsLoading] = useState(true);
     const [scores, setScores] = useState([]);
 
@@ -27,31 +28,37 @@ const HighscoreScreen = ({navigation}) => {
     }
 
     return (
-        <View style={styles.container}>
-            <View style={styles.header}>
-                <TouchableOpacity style={styles.iconback} onPress={() => navigation.navigate('Home')}>
-                    <ImageBackground 
-                        source={require('../../../assets/icon/back.png')}
-                        style={styles.iconback}  
+        <LinearGradient
+            colors={['#4c669f', '#3b5998', '#192f6a']}
+            style={styles.gradient}
+        >
+            <View style={styles.container}>
+                <View style={styles.header}>
+                    <TouchableOpacity style={styles.iconBack} onPress={() => navigation.navigate('Home')}>
+                        <ImageBackground
+                            source={require('../../../assets/icon/back.png')}
+                            style={styles.iconBack}
+                        />
+                    </TouchableOpacity>
+                    <Text style={styles.textRule}>Rankings</Text>
+                </View>
+                <View style={styles.listRank}>
+                    <FlatList
+                        data={scores}
+                        keyExtractor={(item, index) => index.toString()}
+                        renderItem={({ item, index }) => (
+                            <View style={styles.scoreItem}>
+                                <Text style={styles.rank}>{index + 1}</Text>
+                                <View style={styles.scoreDetails}>
+                                    <Text style={styles.score}>Score: {item.score}</Text>
+                                    <Text style={styles.dateTime}>Date: {new Date(item.dateTime).toLocaleDateString()}</Text>
+                                </View>
+                            </View>
+                        )}
                     />
-                </TouchableOpacity>
-                <Text style={styles.textrule}>Bảng xếp hạng</Text>
+                </View>
             </View>
-            <View style={styles.listrank}>
-                <FlatList
-                    data={scores}
-                    keyExtractor={(item, index) => index.toString()}
-                    renderItem={({ item, index }) => (
-                        <View style={styles.scoreItem}>
-                            <Text style={styles.rank}>{index + 1}</Text>
-                            <Text style={styles.score}>Điểm: {item.score}</Text>
-                            <Text style={styles.dateTime}>{item.dateTime}</Text>
-                        </View>
-                    )}
-                >
-                </FlatList>
-            </View>
-        </View>
+        </LinearGradient>
     );
 };
 

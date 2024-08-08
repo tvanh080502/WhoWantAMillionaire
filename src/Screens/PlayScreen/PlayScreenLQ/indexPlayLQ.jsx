@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useContext } from 'react';
-import { ImageBackground, FlatList, Text, TouchableOpacity, View } from 'react-native';
+import { ImageBackground, FlatList, Text, TouchableOpacity, View, ActivityIndicator } from 'react-native';
+import LinearGradient from 'react-native-linear-gradient'; // Import LinearGradient for gradient backgrounds
 import styles from './stylePlayLQ';
 import soundManager from '../../../SoundManager/soundManager';
 import VolumeContext from '../../../SoundManager/volumeManager';
@@ -55,13 +56,22 @@ const PlayLQScreen = ({ navigation }) => {
                     source={require('../../../../assets/icon/question.png')}
                     style={styles.iconquestion}
                 />
-                <Text style={styles.textid}>{points}</Text>
+                <Text style={styles.textPoints}>{points}</Text> 
             </View>
         );
     };
 
+    const handlePress = () => {
+        setTimeout(() => {
+            navigation.navigate('PlayQA');
+        }, 500); 
+    };
+
     return (
-        <View style={styles.container}>
+        <LinearGradient
+            colors={['#4c669f', '#3b5998', '#192f6a']}
+            style={styles.container}
+        >
             <View style={styles.header}>
                 <TouchableOpacity
                     style={styles.nextbutton}
@@ -73,12 +83,12 @@ const PlayLQScreen = ({ navigation }) => {
                     />
                 </TouchableOpacity>
                 <View style={styles.headertext}>
-                    <Text style={styles.textheader}>Trở về</Text>
-                    <Text style={styles.textheader}>Bắt đầu</Text>
+                    <Text style={styles.textheader}>Return</Text>
+                    <Text style={styles.textheader}>Start Game</Text>
                 </View>
                 <TouchableOpacity
                     style={styles.nextbutton}
-                    onPress={() => navigation.navigate('PlayQA')}
+                    onPress={handlePress}
                 >
                     <ImageBackground
                         source={require('../../../../assets/icon/next.png')}
@@ -88,7 +98,7 @@ const PlayLQScreen = ({ navigation }) => {
             </View>
             <View style={styles.viewlist}>
                 {isLoading ? (
-                    <Text>Đang tải câu hỏi...</Text>
+                    <ActivityIndicator size="large" color="#FFF" />
                 ) : (
                     <FlatList
                         data={questions}
@@ -98,8 +108,8 @@ const PlayLQScreen = ({ navigation }) => {
                     />
                 )}
             </View>
-        </View>
+        </LinearGradient>
     );
-}
+};
 
 export default PlayLQScreen;

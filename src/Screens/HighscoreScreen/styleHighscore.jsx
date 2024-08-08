@@ -1,18 +1,19 @@
 import { StyleSheet } from "react-native";
 
 const styles = StyleSheet.create({
+    gradient: {
+        flex: 1,
+    },
     container: {
         flex: 1,
-        backgroundColor: '#fff',
     },
     header: {
-        flex: 1,
-        flexDirection:'row',
+        flexDirection: 'row',
         alignItems: 'center',
-        paddingHorizontal: 10,
         paddingVertical: 10,
+        paddingHorizontal: 5,
     },
-    iconback: {
+    iconBack: {
         width: 50,
         height: 50,
         marginVertical: 10,
@@ -23,42 +24,48 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
         alignItems: 'center',
     },
-    textrule: {
-        marginLeft: 20,
-        fontSize: 25,
-        fontFamily: 'bold',
-        color: '#000',
+    textRule: {
+        fontSize: 24,
+        fontWeight: 'bold',
+        color: '#fff',
     },
-    listrank: {
+    listRank: {
         flex: 10,
-        width: '80%',
+        paddingHorizontal: 25,
         marginBottom: 20,
-        marginHorizontal: '10%',
-        justifyContent: 'center',
-        alignItems: 'center',
     },
     scoreItem: {
+        backgroundColor: 'rgba(255, 255, 255, 0.1)',
+        borderRadius: 10,
+        padding: 15,
+        marginVertical: 8,
         flexDirection: 'row',
-        justifyContent: 'space-between',
         alignItems: 'center',
-        padding: 10,
-        borderBottomWidth: 1,
-        borderBottomColor: '#ccc',
-        width: '100%',
+        shadowColor: '#000',
+        shadowOffset: { width: 0, height: 2 },
+        shadowOpacity: 0.2,
+        shadowRadius: 4,
     },
     rank: {
-        fontSize: 18,
+        width: '12%',
+        fontSize: 20,
         fontWeight: 'bold',
-        width: 50,
+        color: '#FFD700', 
+        marginRight: 15,
     },
-    score: {
-        fontSize: 18,
+    scoreDetails: {
         flex: 1,
     },
+    score: {
+        width: '33%',
+        fontSize: 16,
+        color: '#fff',
+    },
     dateTime: {
+        width: '55%',
         fontSize: 14,
-        color: '#666',
+        color: '#ccc',
     },
 });
-  
-  export default styles;
+
+export default styles;

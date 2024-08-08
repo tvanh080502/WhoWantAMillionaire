@@ -1,16 +1,19 @@
 import { StyleSheet } from "react-native";
 
 const styles = StyleSheet.create({
+    gradientContainer: {
+        flex: 1,
+    },
     container: {
         flex: 1,
         justifyContent: 'center',
         alignItems: 'center',
-        backgroundColor: '#003459',
+        backgroundColor: 'transparent', 
     },
     header: {
         flex: 1,
         width: '100%',
-        flexDirection:'row',
+        flexDirection: 'row',
         paddingHorizontal: 10,
         paddingVertical: 10,
         justifyContent: 'flex-start',
@@ -44,7 +47,7 @@ const styles = StyleSheet.create({
     },
     soundtext: {
         fontSize: 30,
-        fontFamily: 'bold',
+        fontWeight: 'bold', // Use fontWeight instead of fontFamily for bold text
         color: '#000',
     },
     soundcontent: {

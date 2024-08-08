@@ -10,6 +10,11 @@ const styles = StyleSheet.create({
         marginTop: '30%',
         alignItems: 'center',
         justifyContent: 'center',
+        padding: 10,
+        borderRadius: 10,
+        shadowOffset: { width: 0, height: 3 },
+        shadowOpacity: 0.3,
+        shadowRadius: 4,
     },
     image: {
         width: 150,

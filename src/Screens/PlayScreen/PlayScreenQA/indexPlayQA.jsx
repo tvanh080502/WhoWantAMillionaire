@@ -6,9 +6,9 @@ import soundManager from '../../../SoundManager/soundManager';
 import VolumeContext from '../../../SoundManager/volumeManager';
 import { getQuestion, getCorrectedAnswer, getHelp50, getHelpHall, getHelpCallFriend } from '../../../CallAPI/callAPI';
 import PercentageBar from './PercentageBar'; 
+import LinearGradient from 'react-native-linear-gradient';
 
 const PlayQAScreen = ({ navigation }) => {
-    const [isLoading, setIsLoading] = useState(true); //Trạng thái loading
     const [questionData, setQuestionData] = useState(null); // Dữ liệu câu hỏi
     const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0); // Setup đếm số lượng câu hỏi dã trả lời đúng liên tiếp là 0
     const [correctAnswerIndex, setCorrectAnswerIndex] = useState(null); // Đahs số thứ tự cho câu hỏi
@@ -86,7 +86,7 @@ const PlayQAScreen = ({ navigation }) => {
             }
 
             const { question, token, sessionCookie } = result;
-            console.log('Full Question Data:', question);
+            // console.log('Full Question Data:', question);
             setQuestionData(question);
             setToken(token);
             setSessionCookie(sessionCookie);
@@ -94,7 +94,6 @@ const PlayQAScreen = ({ navigation }) => {
             const correctIndex = await getCorrectedAnswer(question, token, sessionCookie);
             // console.log('Response Text:', correctIndex);
             setCorrectAnswerIndex(correctIndex - 1);
-            setIsLoading(false);
         } catch (error) {
             console.error('Error fetching question:', error);
             Alert.alert('Error', 'Failed to load question data.');
@@ -119,6 +118,29 @@ const PlayQAScreen = ({ navigation }) => {
                 }
                 blinkAnswer(isCorrect);
             }, 3000);
+        }
+    };
+
+    // Hàm lấy giá trị thời gian
+    const getCurrentDateTime = () => {
+        const current = new Date();
+        return `${current.getFullYear()}-${current.getMonth() + 1}-${current.getDate()} ${current.getHours()}:${current.getMinutes()}:${current.getSeconds()}`;
+    };
+
+    const saveScore = async (score, dateTime) => {
+        try {
+            const response = await fetch('http://10.0.2.2:3000/api/scores', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ score, dateTime }),
+            });
+
+            const result = await response.json();
+            console.log('Score saved:', result);
+        } catch (error) {
+            console.error('Error saving score:', error);
         }
     };
 
@@ -152,7 +174,7 @@ const PlayQAScreen = ({ navigation }) => {
                 setHelp50(false);
                 setHelpCallFriend(false);
                 setHelpVote(false);
-                setTimeout(handleShowWrongAnswerModal, 500);
+                setTimeout(handleShowWrongAnswerModal, 100);
             }
         });
     };
@@ -227,11 +249,15 @@ const PlayQAScreen = ({ navigation }) => {
 
     const handleTimeout = () => {
         setModalTimeout(false);
+        const dateTime = getCurrentDateTime();
+        saveScore(score, dateTime);
         navigation.navigate('Home');
     };
 
     const handleWrongAnswer = () => {
         setModalWrongAnswer(false);
+        const dateTime = getCurrentDateTime();
+        saveScore(score, dateTime);
         navigation.navigate('Home');
     };
 
@@ -293,45 +319,67 @@ const PlayQAScreen = ({ navigation }) => {
         setTimerRunning(true);
     };
 
-    if (isLoading) {
-        return <ActivityIndicator size="large" color="#0000ff" />;
-    }
+    const handleShowConfirmationModal = () => {
+        setConfirmationModalVisible(true);
+        setTimerRunning(false);
+    };
+    
+    const handleConfirmStopGame = () => {
+        const dateTime = getCurrentDateTime();
+        saveScore(score, dateTime);
+        setConfirmationModalVisible(false);
+        navigation.navigate('Home');
+    };
+    
+    const handleCancelStopGame = () => {
+        setConfirmationModalVisible(false);
+        setTimerRunning(true);
+    };
 
     if (isWinner) {
         return (
-            <View style={styles.container}>
+            <LinearGradient
+            colors={['#4c669f', '#3b5998', '#192f6a']}
+            style={styles.gradientcontainer}
+            >
+                <View style={styles.container}>
                 <View style={styles.scorewin}>
-                    <Text style={styles.winText}>Bạn đã chiến thắng!</Text>
-                    <Text style={styles.scoreText}>Điểm số: {score}</Text>
+                    <Text style={styles.winText}>You won!</Text>
+                    <Text style={styles.scoreText}>Scores: {score}</Text>
                 </View>
                 <TouchableOpacity
                     style={styles.nextButton}
                     onPress={() => navigation.navigate('Highscore')}
                 >
-                    <Text style={styles.nextButtonText}>Xem bảng xếp hạng</Text>
+                    <Text style={styles.nextButtonText}>View Ranking</Text>
                 </TouchableOpacity>
                 <TouchableOpacity
                     style={styles.nextButton}
                     onPress={() => navigation.navigate('Home')}
                 >
-                    <Text style={styles.nextButtonText}>Trở về</Text>
+                    <Text style={styles.nextButtonText}>Return</Text>
                 </TouchableOpacity>
-            </View>
+                </View>
+            </LinearGradient>
         );
     }
 
     const currentQuestion = questionData;
 
     if (!currentQuestion) {
-        return <Text>No questions available</Text>;
+        return <Text></Text>;
     }
 
     return (
+        <LinearGradient
+            colors={['#4c669f', '#3b5998', '#192f6a']}
+            style={styles.container}
+        >
         <View style={styles.container}>
             <View style={styles.header}>
                 <TouchableOpacity 
                 style={styles.nextbutton}
-                onPress={() => setConfirmationModalVisible(true)}
+                onPress={handleShowConfirmationModal}
                 >
                     <ImageBackground
                         source={require('../../../../assets/icon/back.png')}
@@ -339,22 +387,21 @@ const PlayQAScreen = ({ navigation }) => {
                     >
                     </ImageBackground>
                 </TouchableOpacity>
-
                 <Modal
                     animationType="slide"
                     transparent={true}
                     visible={confirmationModalVisible}
-                    onRequestClose={() => setConfirmationModalVisible(false)}
+                    onRequestClose={handleCancelStopGame}
                 >
                     <View style={styles.modalclose}>
                         <View style={styles.modalclosewindow}>
-                            <Text style={styles.modalclosetext}>Bạn có chắc chắn muốn dừng cuộc chơi không?</Text>
+                            <Text style={styles.modalclosetext}>Are you sure you want to stop playing?</Text>
                             <View style={styles.modalbutton}>
-                                <TouchableOpacity style={styles.closesaveback} onPress={() => navigation.navigate('Home')}>
-                                    <Text style={styles.closeButtonText}>Có</Text>
+                                <TouchableOpacity style={styles.closesaveback} onPress={handleConfirmStopGame}>
+                                    <Text style={styles.closeButtonText}>Yes</Text>
                                 </TouchableOpacity>
-                                <TouchableOpacity style={styles.closestop} onPress={() => setConfirmationModalVisible(false)}>
-                                    <Text style={styles.closeButtonText}>Không</Text>
+                                <TouchableOpacity style={styles.closestop} onPress={handleCancelStopGame}>
+                                    <Text style={styles.closeButtonText}>No</Text>
                                 </TouchableOpacity>
                             </View>
                         </View>
@@ -398,7 +445,7 @@ const PlayQAScreen = ({ navigation }) => {
                                 style={styles.nextButton}
                                 onPress={handleNextQuestion}
                             >
-                                <Text style={styles.nextButtonText}>Câu hỏi tiếp theo</Text>
+                                <Text style={styles.nextButtonText}>Next Question</Text>
                             </TouchableOpacity>
                         ) : (
                             <Modal
@@ -409,11 +456,11 @@ const PlayQAScreen = ({ navigation }) => {
                             >
                                 <View style={styles.modalclose}>
                                     <View style={styles.modalclosewindow}>
-                                        <Text style={styles.modalclosetext}>Bạn đã trả lời sai</Text>
-                                        <Text style={styles.modalclosetext}>Điểm số của bạn: {score}</Text>
+                                        <Text style={styles.modalclosetext}>You answered wrong</Text>
+                                        <Text style={styles.modalclosetext}>Your score: {score}</Text>
                                         <View style={styles.modalbutton}>
                                             <TouchableOpacity style={styles.closebacktimeout} onPress={handleWrongAnswer}>
-                                                <Text style={styles.closeButtonText}>Trở về</Text>
+                                                <Text style={styles.closeButtonText}>Return</Text>
                                             </TouchableOpacity>
                                         </View>
                                     </View>
@@ -431,11 +478,11 @@ const PlayQAScreen = ({ navigation }) => {
                     >
                         <View style={styles.modalclose}>
                             <View style={styles.modalclosewindow}>
-                                <Text style={styles.modalclosetext}>Thời gian đã hết</Text>
-                                <Text style={styles.modalclosetext}>Điểm số của bạn: {score}</Text>
+                                <Text style={styles.modalclosetext}>Time's up</Text>
+                                <Text style={styles.modalclosetext}>Your scores: {score}</Text>
                                 <View style={styles.modalbutton}>
                                     <TouchableOpacity style={styles.closebacktimeout} onPress={handleTimeout}>
-                                        <Text style={styles.closeButtonText}>Trở về</Text>
+                                        <Text style={styles.closeButtonText}>Return</Text>
                                     </TouchableOpacity>
                                 </View>
                             </View>
@@ -443,7 +490,7 @@ const PlayQAScreen = ({ navigation }) => {
                     </Modal>
                 )}
                 <View style={styles.score}>
-                    <Text style={styles.scoreText}>Điểm số: {score}</Text> 
+                    <Text style={styles.scoreText}>Scores: {score}</Text> 
                 </View>
             </View>
             <View style={styles.help}>
@@ -513,6 +560,7 @@ const PlayQAScreen = ({ navigation }) => {
                 </Modal>
             </View>
         </View>
+        </LinearGradient>
     );
 };
 

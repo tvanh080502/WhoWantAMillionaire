@@ -1,39 +1,39 @@
 import React from "react";
 import { ImageBackground, ScrollView, Text, TouchableOpacity, View } from "react-native";
+import LinearGradient from 'react-native-linear-gradient';
 import styles from "./styleRule";
 
 const gameRules = [
-    {
-      title: 'Cấu trúc câu hỏi',
-      description: "Người chơi sẽ phải trả lời tổng cộng 15 câu hỏi để đạt được giải thưởng cao nhất là 1 tỷ đồng. Các câu hỏi được sắp xếp theo thứ tự từ dễ đến khó, và giá trị tiền thưởng tăng dần theo mỗi câu hỏi."
-    },
-    {
-      title: 'Mốc an toàn',
-      description: "Có hai mốc an toàn: mốc 5 (1 triệu đồng) và mốc 10 (22 triệu đồng). Nếu người chơi trả lời đúng câu hỏi ở mốc này, họ sẽ bảo toàn được số tiền thưởng này dù có trả lời sai ở các câu hỏi sau."
-    },
-    {
-      title: 'Quyền trợ giúp',
-      description: "Người chơi có 3 quyền trợ giúp trong suốt chương trình:",
-      options: [
-        "50:50: Loại bỏ 2 đáp án sai, chỉ còn lại 1 đáp án đúng và 1 đáp án sai.",
-        "Gọi điện thoại cho người thân: Người chơi sẽ có 30 giây để gọi điện thoại và hỏi ý kiến của một người thân đã đăng ký trước.",
-        "Hỏi ý kiến khán giả trong trường quay: Khán giả trong trường quay sẽ bình chọn cho đáp án mà họ nghĩ là đúng.",
-      ]
-    },
-    {
-      title: 'Quyết định của người chơi',
-      description: "Người chơi có quyền dừng lại ở bất kỳ câu hỏi nào và bảo toàn số tiền thưởng hiện tại của mình. Nếu người chơi trả lời sai, số điểm sẽ được lưu lại là số điểm hiện tại của người chơi."
-    },
-    {
-      title: 'Thời gian trả lời câu hỏi',
-      description: "Thời gian tối đa cho mỗi câu hỏi là 120 phút, người chơi cần suy nghĩ kỹ trước khi đưa ra đáp án cuối cùng."
-    }
+  {
+    "title": "Question Structure",
+    "description": "The player will have to answer a total of 15 questions to win the top prize of 1 billion VND. The questions are arranged in order from easy to difficult, and the prize money increases with each question."
+  },
+  {
+    "title": "Help Options",
+    "description": "The player has 3 help options throughout the show:",
+    "options": [
+      "50:50: Eliminate 2 incorrect answers, leaving only 1 correct answer and 1 incorrect answer.",
+      "Phone a Friend: The player will have 30 seconds to call and ask for advice from a pre-registered friend or family member.",
+      "Ask the Audience: The studio audience will vote for the answer they think is correct."
+    ]
+  },
+  {
+    "title": "Player's Decision",
+    "description": "The player has the right to stop at any question and keep their current prize money. If the player answers incorrectly, their score will be recorded as their current score."
+  },
+  {
+    "title": "Question Answering Time",
+    "description": "The maximum time for each question is 120 seconds, and the player needs to think carefully before giving their final answer."
+  }
 ];
 
 const RuleScreen = ({navigation}) => {
 
     return (
-        <View style={styles.container}>
+        <LinearGradient
+          colors={['#4c669f', '#3b5998', '#192f6a']}
+          style={styles.container}
+        >
             <View style={styles.header}>
                 <TouchableOpacity style={styles.iconback} onPress={() => navigation.navigate('Home')}>
                     <ImageBackground 
@@ -41,7 +41,7 @@ const RuleScreen = ({navigation}) => {
                         style={styles.iconback}  
                     />
                 </TouchableOpacity>
-                <Text style={styles.Rule}>Luật chơi</Text>
+                <Text style={styles.ruleText}>Game Rules</Text>
             </View>
             <ScrollView style={styles.textRule}>
                 {gameRules.map((item, index) => (
@@ -49,12 +49,12 @@ const RuleScreen = ({navigation}) => {
                         <Text style={styles.textheader}>{item.title}</Text>
                         <Text style={styles.text}>{item.description}</Text>
                         {item.options && item.options.map((option, id) => (
-                            <Text key={id} style={styles.text}> - {option}</Text>
+                            <Text key={id} style={styles.text}>- {option}</Text>
                         ))}
                     </View>
                 ))}
             </ScrollView>
-        </View>
+        </LinearGradient>
     );
 };
 
