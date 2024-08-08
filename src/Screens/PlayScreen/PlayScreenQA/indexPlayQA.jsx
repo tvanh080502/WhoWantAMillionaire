@@ -32,6 +32,7 @@ const PlayQAScreen = ({ navigation }) => {
     const [sessionCookie, setSessionCookie] = useState(null); // Lấy session cookie từ getQuestion
     const [hallPercentages, setHallPercentages] = useState([]); // Dữ liệu của help hall trả về
     const [friendAdvice, setFriendAdvice] = useState(null); // Dữ liệu của call friend trả về
+    const [stophelp, setstophelp] = useState(false); // Kiểm soát để khi đã chọn đáp án không thẻ chọn quyền trợ giúp
 
     const fadeAnim = useRef(new Animated.Value(1)).current; //Khởi tạo giá trị hiệu ứng
     const { volume } = useContext(VolumeContext); // Lấy giá trị âm thanh từ setting
@@ -497,7 +498,7 @@ const PlayQAScreen = ({ navigation }) => {
                 <TouchableOpacity 
                     style={[styles.helpbutton, !help50 ? styles.buttonUsed : null]}
                     onPress={handleHelp50}
-                    disabled={!help50}
+                    disabled={!help50 || selectedAnswer !== null}
                 >
                     <ImageBackground
                     style={styles.helpimage}
@@ -507,7 +508,7 @@ const PlayQAScreen = ({ navigation }) => {
                 <TouchableOpacity 
                     style={[styles.helpbutton, !helpvote ? styles.buttonUsed : null]}
                     onPress={handleHelpvote}
-                    disabled={!helpvote}
+                    disabled={!helpvote || selectedAnswer !== null}
                 >
                     <ImageBackground
                     style={styles.helpimage}
@@ -517,7 +518,7 @@ const PlayQAScreen = ({ navigation }) => {
                 <TouchableOpacity 
                     style={[styles.helpbutton, !helpcallfriend ? styles.buttonUsed : null]}
                     onPress={handleHelpcallfriend}
-                    disabled={!helpcallfriend}
+                    disabled={!helpcallfriend || selectedAnswer !== null}
                 >
                     <ImageBackground
                     style={styles.helpimage}
