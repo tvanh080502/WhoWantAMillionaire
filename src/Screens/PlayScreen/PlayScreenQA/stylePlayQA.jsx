@@ -262,6 +262,7 @@ const styles = StyleSheet.create({
     },
     help: {
         flex: 2,
+        marginTop: 10,
         flexDirection: 'row',
         width: '90%',
         justifyContent: 'center',
