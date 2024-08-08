@@ -31,7 +31,7 @@ const soundManager = (screenName) => {
                 if (!success) {
                     console.error('Sound playback failed');
                 } else {
-                    console.log('Sound playback successful');
+                    // console.log('Sound playback successful');
                 }
             });
         });

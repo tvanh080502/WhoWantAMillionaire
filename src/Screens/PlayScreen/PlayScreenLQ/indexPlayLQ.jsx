@@ -12,9 +12,17 @@ const PlayLQScreen = ({ navigation }) => {
     const soundRef = soundManager('playlq_sound');
 
     useEffect(() => {
-        fetchQuestions();
+        // Khởi tạo danh sách 15 câu hỏi
+        const initialQuestions = Array.from({ length: 15 }, (_, index) => ({
+            id: index + 1,
+            question: `Question ${index + 1}`,
+        }));
 
-        // Cleanup sound when component unmounts
+        setQuestions(initialQuestions);
+        setIsLoading(false);
+    }, []);
+
+    useEffect(() => {
         return () => {
             if (soundRef.current) {
                 soundRef.current.stop(() => {
@@ -33,22 +41,7 @@ const PlayLQScreen = ({ navigation }) => {
         }
     }, [volume]);
 
-    const fetchQuestions = async () => {
-        try {
-            const response = await fetch('http://10.0.2.2:3000/api/questions');
-            const text = await response.text();
-            console.log('Response text:', text);
-
-            const json = JSON.parse(text);
-            setQuestions(json.slice(0, 15));
-            setIsLoading(false);
-        } catch (error) {
-            console.error('Error fetching questions:', error);
-        }
-    };
-
-    const renderQuestion = ({ item, index}) => {
-        
+    const renderQuestion = ({ item, index }) => {
         let points = 0;
         for (let i = 0; i < index; i++) {
             points += (i + 1) % 5 === 0 ? 300 : 100;
@@ -57,12 +50,11 @@ const PlayLQScreen = ({ navigation }) => {
 
         return (
             <View key={item.id} style={styles.QA}>
-                <Text style={styles.textid}>{item.id}</Text>
+                <Text style={styles.textid}>{`Question ${item.id}`}</Text>
                 <ImageBackground
                     source={require('../../../../assets/icon/question.png')}
                     style={styles.iconquestion}
-                >
-                </ImageBackground>
+                />
                 <Text style={styles.textid}>{points}</Text>
             </View>
         );
@@ -73,12 +65,12 @@ const PlayLQScreen = ({ navigation }) => {
             <View style={styles.header}>
                 <TouchableOpacity
                     style={styles.nextbutton}
-                    onPress={() => navigation.navigate('Home')}>
+                    onPress={() => navigation.navigate('Home')}
+                >
                     <ImageBackground
                         source={require('../../../../assets/icon/back.png')}
                         style={styles.iconimage}
-                    >
-                    </ImageBackground>
+                    />
                 </TouchableOpacity>
                 <View style={styles.headertext}>
                     <Text style={styles.textheader}>Trở về</Text>
@@ -86,12 +78,12 @@ const PlayLQScreen = ({ navigation }) => {
                 </View>
                 <TouchableOpacity
                     style={styles.nextbutton}
-                    onPress={() => navigation.navigate('PlayQA')}>
+                    onPress={() => navigation.navigate('PlayQA')}
+                >
                     <ImageBackground
                         source={require('../../../../assets/icon/next.png')}
                         style={styles.iconimage}
-                    >
-                    </ImageBackground>
+                    />
                 </TouchableOpacity>
             </View>
             <View style={styles.viewlist}>

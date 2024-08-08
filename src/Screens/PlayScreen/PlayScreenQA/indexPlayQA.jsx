@@ -1,50 +1,62 @@
 import React, { useState, useEffect, useRef, useContext } from 'react';
-import { View, Text, TouchableOpacity, ActivityIndicator, ImageBackground, Modal, Animated } from 'react-native';
+import { View, Text, TouchableOpacity, ActivityIndicator, ImageBackground, Modal, Animated, Alert } from 'react-native';
 import Sound from 'react-native-sound';
 import styles from './stylePlayQA';
 import soundManager from '../../../SoundManager/soundManager';
 import VolumeContext from '../../../SoundManager/volumeManager';
+import { getQuestion, getCorrectedAnswer, getHelp50, getHelpHall, getHelpCallFriend } from '../../../CallAPI/callAPI';
+import PercentageBar from './PercentageBar'; 
 
 const PlayQAScreen = ({ navigation }) => {
     const [isLoading, setIsLoading] = useState(true); //Trạng thái loading
-    const [questions, setQuestions] = useState([]); //Lấy câu hỏi từ api
+    const [questionData, setQuestionData] = useState(null); // Dữ liệu câu hỏi
     const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0); // Setup đếm số lượng câu hỏi dã trả lời đúng liên tiếp là 0
-    const [selectedAnswer, setSelectedAnswer] = useState(null); // Kiểm tra có chọn câu trả lời hay không
-    const [isAnswerCorrect, setIsAnswerCorrect] = useState(false); //Kiểm tra đúng sai câu trả lời
-    const [score, setScore] = useState(0); //Setup số điểm ban đầu là 0
-    const [seconds, setSeconds] = useState(120); //Setup thời gian đếm ngược là 120s
-    const [isWinner, setIsWinner] = useState(false); //Trạng thái kiểm tra người chiến thắng
-    const [timerRunning, settimerRunning] = useState(true); //Trạng thái thời gian đếm ngược chạy
-    const [modalVisible, setModalVisible] = useState(false);//Trạng thái dóng mở modal trợ giúp
-    const [help50, sethelp50] = useState(true);//Trạng thái sử dụng quyền trợ giúp 50/50
-    const [helpvote, sethelpvote] = useState(true);//Trạng thái sử dụng quyền trợ giúp vote
-    const [helpcallfriend, sethelpcallfriend] = useState(true); //Trạng thái sử dụng quyền trợ giúp helpcall
-    const [confirmationModalVisible, setConfirmationModalVisible] = useState(false); //Trạng thái để mở của sổ dừng cuộc chơi
-    const [modalTimeout, setmodalTimeout] = useState(false); //Trạng thái kiểm tra hết giờ trả lời câu hỏi
-    const [modalWrongAnswer, setmodalWrongAnswer] = useState(false); //Trạng thái khi trả lời sai để đóng mở modal
-    const [blink, setBlink] = useState(false); // Trạng thái nhấp nháy đáp án
-    const [showNextButton, setShowNextButton] = useState(false); // Trạng thái hiển thị nút "Câu hỏi tiếp theo"
+    const [correctAnswerIndex, setCorrectAnswerIndex] = useState(null); // Đahs số thứ tự cho câu hỏi
+    const [selectedAnswer, setSelectedAnswer] = useState(null); // Trạng thái có chọn câu hỏi hay không
+    const [isAnswerCorrect, setIsAnswerCorrect] = useState(false); // Câu trả lời được chọn
+    const [score, setScore] = useState(0); // Lưu điểm chơi
+    const [seconds, setSeconds] = useState(120); // Thời gian ban cho mỗi câu hỏi
+    const [isWinner, setIsWinner] = useState(false); // Trạng thái người chiến thắng
+    const [timerRunning, setTimerRunning] = useState(true); // Trạng thái thời gian đếm ngược chạy
+    const [modalVisible, setModalVisible] = useState(false); // Trạng thái cửa sổ modal đóng/mở
+    const [help50, setHelp50] = useState(true); // Trạng thái chưa sử dụng  50/50
+    const [helpvote, setHelpVote] = useState(true); // Trạng thái chưa sử dụng  help hall
+    const [helpcallfriend, setHelpCallFriend] = useState(true); // Trạng thái chưa sử dụng call friend
+    const [confirmationModalVisible, setConfirmationModalVisible] = useState(false); // Trạng thái xác nhận dừng cuộc chơi
+    const [modalTimeout, setModalTimeout] = useState(false); // Trạng thái thời gian kết thúc
+    const [modalWrongAnswer, setModalWrongAnswer] = useState(false); // Trạng thái mở cửa sổ modal khi trả lời sai
+    const [blink, setBlink] = useState(false); // Trạng thái nhấp nháy của đáp án khi lựa chọn
+    const [showNextButton, setShowNextButton] = useState(false); // Trạng thái hiển thị button 'Câu hỏi tiếp theo'
     const [answerColor, setAnswerColor] = useState(null); // Trạng thái màu sắc của đáp án được chọn
+    const [token, setToken] = useState(null); // Lấy token từ getQuestion
+    const [sessionCookie, setSessionCookie] = useState(null); // Lấy session cookie từ getQuestion
+    const [hallPercentages, setHallPercentages] = useState([]); // Dữ liệu của help hall trả về
+    const [friendAdvice, setFriendAdvice] = useState(null); // Dữ liệu của call friend trả về
 
-    const fadeAnim = useRef(new Animated.Value(1)).current; // Giá trị hoạt ảnh
-
-    // Phát âm thanh
-    const { volume } = useContext(VolumeContext)
-    const soundRef = soundManager('playqa_sound');
-    const backgroundSoundRef = useRef(null);
+    const fadeAnim = useRef(new Animated.Value(1)).current; //Khởi tạo giá trị hiệu ứng
+    const { volume } = useContext(VolumeContext); // Lấy giá trị âm thanh từ setting
+    const soundRef = soundManager('playqa_sound'); // Phát âm nhac trên màn hình
+    const backgroundSoundRef = useRef(null); // Khởi tạo giá trị âm thanh nền
 
     useEffect(() => {
         if (soundRef.current) {
             soundRef.current.setVolume(volume);
         }
-        // Thiết lập âm thanh nền
         backgroundSoundRef.current = soundRef.current;
     }, [volume]);
-    
 
-    // Hook đếm ngược và kiếm tra trạng thái đang chạy của thời gian đếm ngược
     useEffect(() => {
-        if (seconds > 0 && timerRunning ) {
+        fetchNextQuestion();
+
+        return () => {
+            if (backgroundSoundRef.current) {
+                backgroundSoundRef.current.stop();
+            }
+        };
+    }, []);
+
+    useEffect(() => {
+        if (seconds > 0 && timerRunning) {
             const timer = setTimeout(() => {
                 setSeconds(seconds - 1);
             }, 1000);
@@ -52,63 +64,64 @@ const PlayQAScreen = ({ navigation }) => {
         }
     }, [seconds, timerRunning]);
 
-    // Hook kiểm tra thời gian đếm ngược đã hết
     useEffect(() => {
         if (seconds === 0) {
-            setmodalTimeout(true);
+            setModalTimeout(true);
         }
     }, [seconds]);
 
-    // Hook kiểm tra câu trả lời
     useEffect(() => {
         if (!isAnswerCorrect) {
-            setmodalWrongAnswer(true);
+            setModalWrongAnswer(true);
         }
     }, [isAnswerCorrect]);
 
-
-    useEffect(() => {
-        fetchQuestions();
-    }, []);
-
-    const fetchQuestions = async () => {
+    const fetchNextQuestion = async () => {
         try {
-            const response = await fetch('http://10.0.2.2:3000/api/questions');
-            const text = await response.text();
-            console.log('Response text:', text);
+            const questionKey = 10;
+            const result = await getQuestion(questionKey);
 
-            const json = JSON.parse(text);
-            setQuestions(json);
+            if (!result || !result.question) {
+                throw new Error('Failed to load question data.');
+            }
+
+            const { question, token, sessionCookie } = result;
+            console.log('Full Question Data:', question);
+            setQuestionData(question);
+            setToken(token);
+            setSessionCookie(sessionCookie);
+
+            const correctIndex = await getCorrectedAnswer(question, token, sessionCookie);
+            // console.log('Response Text:', correctIndex);
+            setCorrectAnswerIndex(correctIndex - 1);
             setIsLoading(false);
         } catch (error) {
-            console.error('Error fetching questions:', error);
+            console.error('Error fetching question:', error);
+            Alert.alert('Error', 'Failed to load question data.');
         }
     };
 
-    // Hàm lấy giá trị thời gian
-    const getCurrentDateTime = () => {
-        const current = new Date();
-        return `${current.getFullYear()}-${current.getMonth() + 1}-${current.getDate()} ${current.getHours()}:${current.getMinutes()}:${current.getSeconds()}`;
-    };
+    const handleAnswerPress = async (selectedIndex) => {
+        if (selectedAnswer === null && seconds > 0) {
+            setSelectedAnswer(selectedIndex);
+            const isCorrect = selectedIndex === correctAnswerIndex;
+            setIsAnswerCorrect(isCorrect);
+            setTimerRunning(false);
+            setAnswerColor('orange');
 
-    const saveScore = async (score, dateTime) => {
-        try {
-            const response = await fetch('http://10.0.2.2:3000/api/scores', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({ score, dateTime }),
-            });
-
-            const result = await response.json();
-            console.log('Score saved:', result);
-        } catch (error) {
-            console.error('Error saving score:', error);
+            setTimeout(() => {
+                if (isCorrect) {
+                    playCorrectSound();
+                    setAnswerColor(styles.correctAnswer.backgroundColor);
+                } else {
+                    playWrongSound();
+                    setAnswerColor(styles.wrongAnswer.backgroundColor);
+                }
+                blinkAnswer(isCorrect);
+            }, 3000);
         }
     };
 
-    // Hàm blinkAnswer để làm nhấp nháy đáp án
     const blinkAnswer = (isCorrect) => {
         Animated.loop(
             Animated.sequence([
@@ -134,23 +147,21 @@ const PlayQAScreen = ({ navigation }) => {
                     setScore((prevScore) => prevScore + 300); // Cộng điểm khi nhấp nháy kết thúc
                 }
             }
-            setShowNextButton(true); // Hiển thị nút "Câu hỏi tiếp theo" sau khi nhấp nháy kết thúc
-            // Hiển thị modal sau khi nhấp nháy kết thúc nếu đáp án sai
+            setShowNextButton(true);
             if (!isCorrect) {
-                sethelp50(false);
-                sethelpcallfriend(false);
-                sethelpvote(false);
-                setTimeout(handleShowWrongAnswerModal, 500); // Thời gian chờ thêm để chắc chắn nhấp nháy kết thúc
+                setHelp50(false);
+                setHelpCallFriend(false);
+                setHelpVote(false);
+                setTimeout(handleShowWrongAnswerModal, 500);
             }
         });
     };
-    
-    // Hàm playCorrectSound để phát âm thanh đúng
+
     const playCorrectSound = () => {
         if (backgroundSoundRef.current) {
             backgroundSoundRef.current.stop();
         }
-    
+
         const sound = new Sound(require('../../../../assets/sound/sound_correct_answer.mp3'), (error) => {
             if (error) {
                 console.error('Error loading correct sound:', error);
@@ -162,20 +173,19 @@ const PlayQAScreen = ({ navigation }) => {
                     console.error('Sound playback failed for correct sound');
                 }
                 sound.release();
-    
-                // Phát lại âm thanh nền
+
                 if (backgroundSoundRef.current) {
                     backgroundSoundRef.current.play();
                 }
             });
         });
     };
-    
+
     const playWrongSound = () => {
         if (backgroundSoundRef.current) {
             backgroundSoundRef.current.stop();
         }
-    
+
         const sound = new Sound(require('../../../../assets/sound/sound_wrong_answer.mp3'), (error) => {
             if (error) {
                 console.error('Error loading incorrect sound:', error);
@@ -187,38 +197,16 @@ const PlayQAScreen = ({ navigation }) => {
                     console.error('Sound playback failed for wrong sound');
                 }
                 sound.release();
-    
-                // Phát lại âm thanh nền
+
                 if (backgroundSoundRef.current) {
                     backgroundSoundRef.current.play();
                 }
             });
         });
     };
-    
-    // Hàm kiểm tra các trạng thái khi trả lời câu hỏi
-    const handleAnswerPress = (answerId, isCorrect) => {
-        if (selectedAnswer === null && seconds > 0) {
-            setSelectedAnswer(answerId);
-            setIsAnswerCorrect(isCorrect);
-            settimerRunning(false);
-            setAnswerColor('orange'); 
-        
-            setTimeout(() => {
-                if (isCorrect) {
-                    playCorrectSound();
-                    setAnswerColor(styles.correctAnswer.backgroundColor); // Đổi màu đáp án thành xanh khi bắt đầu nhấp nháy
-                } else {
-                    playWrongSound();
-                    setAnswerColor(styles.wrongAnswer.backgroundColor); // Đổi màu đáp án thành đỏ khi bắt đầu nhấp nháy
-                }
-                blinkAnswer(isCorrect);
-            }, 3000);
-        }
-    };
 
     const handleShowWrongAnswerModal = () => {
-        setmodalWrongAnswer(true);
+        setModalWrongAnswer(true);
     };
 
     const handleNextQuestion = () => {
@@ -226,94 +214,90 @@ const PlayQAScreen = ({ navigation }) => {
             setCurrentQuestionIndex(currentQuestionIndex + 1);
             setSelectedAnswer(null);
             setIsAnswerCorrect(false);
-            settimerRunning(true);
+            setTimerRunning(true);
             setSeconds(120);
             setShowNextButton(false);
-        }
+            fetchNextQuestion();
+            }
         else {
-            settimerRunning(false);
+            setTimerRunning(false);
             setIsWinner(true);
         }
     };
 
     const handleTimeout = () => {
-        setmodalTimeout(false);
-        const dateTime = getCurrentDateTime();
-        saveScore(score, dateTime);
+        setModalTimeout(false);
         navigation.navigate('Home');
     };
 
     const handleWrongAnswer = () => {
-        setmodalWrongAnswer(false);
-        const dateTime = getCurrentDateTime();
-        saveScore(score, dateTime);
+        setModalWrongAnswer(false);
         navigation.navigate('Home');
     };
 
-    // Hàm để mở của sổ khi chọn quyền trợ giúp
-    const handleOpenModalHelp = () => {
-        setModalVisible(true);
-        settimerRunning(false);
+    const handleHelp50 = async () => {
+        try {
+            const help50Data = await getHelp50(questionData, token);
+            if (help50Data) {
+                setQuestionData(help50Data);
+                setHelp50(false);
+                setTimerRunning(false);
+                // Alert.alert('50:50 Help', 'The question has been updated with the 50:50 help.');
+            } else {
+                throw new Error('Failed to get 50:50 help.');
+            }
+        } catch (error) {
+            console.error('[API] getHelp50 error:', error);
+            Alert.alert('Error', 'There was a problem with the 50:50 help request. Please try again later.');
+        }
     };
 
-    const handleHelp50 = () => {
-        if (help50) {
-            sethelp50(false);
-            handleOpenModalHelp();
+    const handleHelpvote = async () => {
+        try {
+            const helpHallData = await getHelpHall(questionData, token);
+            if (helpHallData) {
+                setHallPercentages(helpHallData);
+                setFriendAdvice(null);
+                setModalVisible(true);
+                setHelpVote(false);
+                setTimerRunning(false);
+            } else {
+                throw new Error('Failed to get hall help.');
+            }
+        } catch (error) {
+            console.error('[API] getHelpHall failed:', error);
+            // Alert.alert('Error', 'There was a problem with the hall help request. Please try again later.');
         }
     };
-    
-    const handleHelpvote = () => {
-        if (helpvote) {
-            sethelpvote(false);
-            handleOpenModalHelp();
+
+    const handleHelpcallfriend = async () => {
+        try {
+            const advice = await getHelpCallFriend(questionData, token);
+            if (advice) {
+                setFriendAdvice(advice);
+                setHallPercentages([]);
+                setModalVisible(true);
+                setHelpCallFriend(false);
+                setTimerRunning(false);
+            } else {
+                throw new Error('Failed to get call friend help.');
+            }
+        } catch (error) {
+            console.error('[API] getHelpCallFriend failed:', error);
+            // Alert.alert('Error', 'There was a problem with the call friend request. Please try again later.');
         }
     };
-    
-    const handleHelpcallfriend = () => {
-        if (helpcallfriend) {
-            sethelpcallfriend(false);
-            handleOpenModalHelp();
-        }
-    };
-    
+
     const handleCloseModalHelp = () => {
         setModalVisible(false);
-        settimerRunning(true);
+        setTimerRunning(true);
     };
 
-    const handleShowConfirmationModal = () => {
-        setConfirmationModalVisible(true);
-        settimerRunning(false);
-    };
-    
-    const handleConfirmStopGame = () => {
-        const dateTime = getCurrentDateTime();
-        saveScore(score, dateTime);
-        setConfirmationModalVisible(false);
-        navigation.navigate('Home');
-    };
-    
-    const handleCancelStopGame = () => {
-        setConfirmationModalVisible(false);
-        settimerRunning(true);
-    };
-
-    const handleTimeoutStopGame = () => {
-        setmodalTimeout(false);
-    };
-    
-    const handleWrongAnswerGame = () => {
-        setmodalWrongAnswer(false);
-    };
-    
     if (isLoading) {
         return <ActivityIndicator size="large" color="#0000ff" />;
     }
 
     if (isWinner) {
-        const dateTime = getCurrentDateTime();
-        saveScore(score, dateTime);
         return (
             <View style={styles.container}>
                 <View style={styles.scorewin}>
@@ -336,7 +320,7 @@ const PlayQAScreen = ({ navigation }) => {
         );
     }
 
-    const currentQuestion = questions[currentQuestionIndex];
+    const currentQuestion = questionData;
 
     if (!currentQuestion) {
         return <Text>No questions available</Text>;
@@ -347,7 +331,7 @@ const PlayQAScreen = ({ navigation }) => {
             <View style={styles.header}>
                 <TouchableOpacity 
                 style={styles.nextbutton}
-                onPress={handleShowConfirmationModal}
+                onPress={() => setConfirmationModalVisible(true)}
                 >
                     <ImageBackground
                         source={require('../../../../assets/icon/back.png')}
@@ -360,16 +344,16 @@ const PlayQAScreen = ({ navigation }) => {
                     animationType="slide"
                     transparent={true}
                     visible={confirmationModalVisible}
-                    onRequestClose={handleCancelStopGame}
+                    onRequestClose={() => setConfirmationModalVisible(false)}
                 >
                     <View style={styles.modalclose}>
                         <View style={styles.modalclosewindow}>
                             <Text style={styles.modalclosetext}>Bạn có chắc chắn muốn dừng cuộc chơi không?</Text>
                             <View style={styles.modalbutton}>
-                                <TouchableOpacity style={styles.closesaveback} onPress={handleConfirmStopGame}>
+                                <TouchableOpacity style={styles.closesaveback} onPress={() => navigation.navigate('Home')}>
                                     <Text style={styles.closeButtonText}>Có</Text>
                                 </TouchableOpacity>
-                                <TouchableOpacity style={styles.closestop} onPress={handleCancelStopGame}>
+                                <TouchableOpacity style={styles.closestop} onPress={() => setConfirmationModalVisible(false)}>
                                     <Text style={styles.closeButtonText}>Không</Text>
                                 </TouchableOpacity>
                             </View>
@@ -388,22 +372,22 @@ const PlayQAScreen = ({ navigation }) => {
             </View> 
             <View style={styles.banner}>
                 <View style={styles.questionheader}>
-                    <Text style={styles.questionText}>{currentQuestion.questionText}</Text>
+                    <Text style={styles.questionText}>{`Question ${currentQuestionIndex + 1}: ${currentQuestion.question}`}</Text>
                 </View>
-                {currentQuestion.answers.map((answer) => (
+                {currentQuestion.answers.map((answer, index) => (
                     <TouchableOpacity
-                        key={answer.id}
+                        key={index}
                         style={[
                             styles.answerButton,
-                            selectedAnswer === answer.id 
+                            selectedAnswer === index 
                                 ? { backgroundColor: blink ? 'transparent' : answerColor } 
                                 : null
                         ]}
-                        onPress={() => handleAnswerPress(answer.id, answer.isCorrect)}
+                        onPress={() => handleAnswerPress(index)}
                         disabled={selectedAnswer !== null} 
                     >
-                        <Animated.View style={{ opacity: selectedAnswer === answer.id ? fadeAnim : 2 }}>
-                            <Text style={styles.answerText}>{answer.text}</Text>
+                        <Animated.View style={{ opacity: selectedAnswer === index ? fadeAnim : 1 }}>
+                            <Text style={styles.answerText}>{answer.answer}</Text>
                         </Animated.View>
                     </TouchableOpacity>
                 ))}
@@ -421,7 +405,7 @@ const PlayQAScreen = ({ navigation }) => {
                                 animationType="slide"
                                 transparent={true}
                                 visible={modalWrongAnswer}
-                                onRequestClose={handleWrongAnswerGame}
+                                onRequestClose={handleWrongAnswer}
                             >
                                 <View style={styles.modalclose}>
                                     <View style={styles.modalclosewindow}>
@@ -443,7 +427,7 @@ const PlayQAScreen = ({ navigation }) => {
                     animationType="slide"
                     transparent={true}
                     visible={modalTimeout}
-                    onRequestClose={handleTimeoutStopGame}
+                    onRequestClose={handleTimeout}
                     >
                         <View style={styles.modalclose}>
                             <View style={styles.modalclosewindow}>
@@ -494,16 +478,35 @@ const PlayQAScreen = ({ navigation }) => {
                     />
                 </TouchableOpacity>
                 <Modal
-                        animationType="slide"
-                        transparent={true}
-                        visible={modalVisible}
-                        onRequestClose={handleCloseModalHelp}
-                    >
-                    <View style={styles.modalOverlay}>
+                    animationType="slide"
+                    transparent={true}
+                    visible={modalVisible}
+                    onRequestClose={handleCloseModalHelp}
+                >
+                    <View style={styles.modalContainer}>
                         <View style={styles.modalContent}>
-                            <Text style={styles.modalText}>Quyền trợ giúp đã hiển thị</Text>
+                            {friendAdvice ? (
+                                <>
+                                    <Text style={styles.modalTitle}>Call a Friend</Text>
+                                    <Text style={styles.modalText}>{friendAdvice}</Text>
+                                </>
+                            ) : (
+                                <>
+                                    <Text style={styles.modalTitle}>Hall Assistance</Text>
+                                    <View style={styles.barChart}>
+                                        {hallPercentages.map((item, index) => (
+                                            <PercentageBar
+                                                key={index}
+                                                label={item.label}
+                                                percent={item.percent}
+                                                color="#00b4d8"
+                                            />
+                                        ))}
+                                    </View>
+                                </>
+                            )}
                             <TouchableOpacity style={styles.closeButton} onPress={handleCloseModalHelp}>
-                                <Text style={styles.closeButtonText}>Đóng</Text>
+                                <Text style={styles.closeButtonText}>Close</Text>
                             </TouchableOpacity>
                         </View>
                     </View>

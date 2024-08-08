@@ -123,7 +123,7 @@ const styles = StyleSheet.create({
     },
     questionheader: {
         width: '90%',
-        paddingHorizontal: '10%',
+        paddingHorizontal: '5%',
         paddingVertical: '2%',
         backgroundColor: '#fff',
         borderRadius: 20,
@@ -133,7 +133,7 @@ const styles = StyleSheet.create({
         marginBottom: 40,
     },
     questionText: {
-        fontSize: 24,
+        fontSize: 22,
         fontWeight: 'bold',
         color: '#000',
         textAlign: 'center',
@@ -248,6 +248,7 @@ const styles = StyleSheet.create({
         marginBottom: 15,
     },
     closeButton: {
+        marginTop: 15,
         backgroundColor: '#ff7b70',
         padding: 10,
         borderRadius: 5,
@@ -256,6 +257,36 @@ const styles = StyleSheet.create({
         color: '#000',
         fontSize: 17,
         fontFamily: 'bold',
+    },
+    modalContainer: {
+        flex: 1,
+        justifyContent: 'center',
+        alignItems: 'center',
+        backgroundColor: 'rgba(0, 0, 0, 0.5)',
+    },
+    modalContent: {
+        backgroundColor: 'white',
+        padding: 20,
+        borderRadius: 10,
+        width: '80%',
+        alignItems: 'center',
+    },
+    modalTitle: {
+        fontSize: 20,
+        fontWeight: 'bold',
+        marginBottom: 10,
+    },
+    modalText: {
+        fontSize: 16,
+        marginVertical: 10,
+        textAlign: 'center',
+    },
+    barChart: {
+        flexDirection: 'row',
+        justifyContent: 'space-around',
+        alignItems: 'flex-end',
+        width: '100%',
+        height: 200,
     },
 });
 
