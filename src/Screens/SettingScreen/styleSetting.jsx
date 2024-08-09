@@ -31,9 +31,13 @@ const styles = StyleSheet.create({
         alignItems: 'center',
     },
     settingtext: {
-        marginLeft: 20,
+        marginLeft: 10,
         fontSize: 23,
-        color: '#fff',
+        color: '#ffffff',
+        fontWeight: 'bold',
+        textShadowColor: '#000',
+        textShadowOffset: { width: 1, height: 1 },
+        textShadowRadius: 3,
     },
     settingcontent: {
         flex: 2,

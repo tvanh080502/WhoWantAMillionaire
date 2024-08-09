@@ -30,7 +30,7 @@ const styles = StyleSheet.create({
         shadowRadius: 3,
     },
     ruleText: {
-        marginLeft: 20,
+        marginLeft: 10,
         fontSize: 23,
         color: '#ffffff',
         fontWeight: 'bold',
