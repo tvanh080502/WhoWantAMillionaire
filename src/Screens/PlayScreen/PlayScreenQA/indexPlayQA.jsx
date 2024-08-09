@@ -137,11 +137,11 @@ const PlayQAScreen = ({ navigation }) => {
           // Tham chiếu đến vị trí lưu trữ điểm số trong Firebase
           const scoresRef = database().ref('/scores');
       
-          // Tạo một mục mới cho điểm số
-          await scoresRef.push({
+        // Tạo một mục mới cho điểm số
+        await scoresRef.push({
             score,
             dateTime,
-          });
+        });
       
           console.log('Score saved successfully:', { score, dateTime });
         } catch (error) {
@@ -237,7 +237,7 @@ const PlayQAScreen = ({ navigation }) => {
     };
 
     const handleNextQuestion = () => {
-        if (currentQuestionIndex < 14) {
+        if (currentQuestionIndex < 1) {
             setCurrentQuestionIndex(currentQuestionIndex + 1);
             setSelectedAnswer(null);
             setIsAnswerCorrect(false);
@@ -341,6 +341,17 @@ const PlayQAScreen = ({ navigation }) => {
         setTimerRunning(true);
     };
 
+    const handleWinnerGame = () => {
+        const dateTime = getCurrentDateTime();
+        saveScore(score, dateTime);
+    };
+
+    const handleButtonPress = (route) => {
+        handleWinnerGame(); 
+        navigation.navigate(route); 
+    };
+    
+
     if (isWinner) {
         return (
             <LinearGradient
@@ -360,15 +371,16 @@ const PlayQAScreen = ({ navigation }) => {
                 </View>
                 <TouchableOpacity
                     style={styles.nextButton}
-                    onPress={() => navigation.navigate('Highscore')}
+                    onPress={() => handleButtonPress('Highscore')}
                 >
                     <Text style={styles.nextButtonText}>View Ranking</Text>
                 </TouchableOpacity>
+
                 <TouchableOpacity
                     style={styles.nextButton}
-                    onPress={() => navigation.navigate('Home')}
+                    onPress={() => handleButtonPress('Home')}
                 >
-                    <Text style={styles.nextButtonText}>Return</Text>
+                    <Text style={styles.nextButtonText}>Go home</Text>
                 </TouchableOpacity>
                 </View>
             </LinearGradient>
