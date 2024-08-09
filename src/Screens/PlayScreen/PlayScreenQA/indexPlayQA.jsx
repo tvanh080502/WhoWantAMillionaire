@@ -33,7 +33,6 @@ const PlayQAScreen = ({ navigation }) => {
     const [sessionCookie, setSessionCookie] = useState(null); // Lấy session cookie từ getQuestion
     const [hallPercentages, setHallPercentages] = useState([]); // Dữ liệu của help hall trả về
     const [friendAdvice, setFriendAdvice] = useState(null); // Dữ liệu của call friend trả về
-    const [stophelp, setstophelp] = useState(false); // Kiểm soát để khi đã chọn đáp án không thẻ chọn quyền trợ giúp
 
     const fadeAnim = useRef(new Animated.Value(1)).current; //Khởi tạo giá trị hiệu ứng
     const { volume } = useContext(VolumeContext); // Lấy giá trị âm thanh từ setting
@@ -237,7 +236,7 @@ const PlayQAScreen = ({ navigation }) => {
     };
 
     const handleNextQuestion = () => {
-        if (currentQuestionIndex < 1) {
+        if (currentQuestionIndex < 14) {
             setCurrentQuestionIndex(currentQuestionIndex + 1);
             setSelectedAnswer(null);
             setIsAnswerCorrect(false);
