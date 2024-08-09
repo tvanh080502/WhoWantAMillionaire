@@ -233,7 +233,7 @@ const PlayQAScreen = ({ navigation }) => {
     };
 
     const handleNextQuestion = () => {
-        if (currentQuestionIndex < 14) {
+        if (currentQuestionIndex < 2) {
             setCurrentQuestionIndex(currentQuestionIndex + 1);
             setSelectedAnswer(null);
             setIsAnswerCorrect(false);
@@ -341,11 +341,17 @@ const PlayQAScreen = ({ navigation }) => {
         return (
             <LinearGradient
             colors={['#4c669f', '#3b5998', '#192f6a']}
-            style={styles.gradientcontainer}
+            style={styles.container}
             >
-                <View style={styles.container}>
+            <View style={styles.container}>
                 <View style={styles.scorewin}>
-                    <Text style={styles.winText}>You won!</Text>
+                    <View style={styles.winnercontent}>
+                        <Text style={styles.winText}>You won</Text>
+                        <ImageBackground
+                        source={require('../../../../assets/icon/winner.png')}
+                        style={styles.iconwinner}
+                        />
+                    </View>
                     <Text style={styles.scoreText}>Scores: {score}</Text>
                 </View>
                 <TouchableOpacity

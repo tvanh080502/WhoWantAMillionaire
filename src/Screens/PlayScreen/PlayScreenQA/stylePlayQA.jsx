@@ -242,7 +242,7 @@ const styles = StyleSheet.create({
         color: '#000',
     },
     scorewin: {
-        width: '90%',
+        width: 350,
         height: 100,
         borderColor: 'red',
         borderWidth: 1,
@@ -255,10 +255,21 @@ const styles = StyleSheet.create({
         shadowOpacity: 0.3,
         shadowRadius: 3,
     },
+    winnercontent: {
+        flexDirection: 'row',
+        justifyContent: 'center',
+        alignItems: 'center',
+    },
+    iconwinner: {
+        width: 32,
+        height: 32,
+        marginLeft: 5,
+        borderRadius: 16,
+    },
     winText: {
-        fontSize: 30,
+        fontSize: 35,
         fontWeight: 'bold',
-        color: '#000',
+        color: 'gold',
     },
     help: {
         flex: 2,

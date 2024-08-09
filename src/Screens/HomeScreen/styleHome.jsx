@@ -44,6 +44,7 @@ const styles = StyleSheet.create({
         alignItems: 'center',
     },
     textbutton: {
+        color: '#000',
         fontSize: 23,
         fontWeight: 'bold',
     },
