@@ -7,6 +7,7 @@ import VolumeContext from '../../../SoundManager/volumeManager';
 import { getQuestion, getCorrectedAnswer, getHelp50, getHelpHall, getHelpCallFriend } from '../../../CallAPI/callAPI';
 import PercentageBar from './PercentageBar'; 
 import LinearGradient from 'react-native-linear-gradient';
+import database from '@react-native-firebase/database';
 
 const PlayQAScreen = ({ navigation }) => {
     const [questionData, setQuestionData] = useState(null); // Dữ liệu câu hỏi
@@ -127,21 +128,24 @@ const PlayQAScreen = ({ navigation }) => {
         const current = new Date();
         return `${current.getFullYear()}-${current.getMonth() + 1}-${current.getDate()} ${current.getHours()}:${current.getMinutes()}:${current.getSeconds()}`;
     };
-
-    const saveScore = async (score, dateTime) => {
+      
+    // Hàm lưu điểm vào Firebase Realtime Database
+    const saveScore = async (score) => {
+        const dateTime = getCurrentDateTime(); // Lấy thời gian hiện tại
+      
         try {
-            const response = await fetch('http://10.0.2.2:3000/api/scores', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({ score, dateTime }),
-            });
-
-            const result = await response.json();
-            console.log('Score saved:', result);
+          // Tham chiếu đến vị trí lưu trữ điểm số trong Firebase
+          const scoresRef = database().ref('/scores');
+      
+          // Tạo một mục mới cho điểm số
+          await scoresRef.push({
+            score,
+            dateTime,
+          });
+      
+          console.log('Score saved successfully:', { score, dateTime });
         } catch (error) {
-            console.error('Error saving score:', error);
+          console.error('Error saving score:', error);
         }
     };
 
