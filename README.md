@@ -36,7 +36,7 @@ yarn ios
 
 <img src="https://github.com/user-attachments/assets/b267ac7e-be52-4082-ae6f-dd77546dcec5" alt="StopPlay_screen" width="270px" height="600px"/>
 
-<img src="https://github.com/user-attachments/assets/2e40ee9c-291c-4b47-a6a4-1825f568c30d" alt="5050_screen" width="270px" height="600px"/>
+<img src="https://github.com/user-attachments/assets/2e40ee9c-291c-4b47-a6a4-1825f568c30d" alt="5050_screen" width="270px" height="600px" style="transform: rotate(180deg);"/>
 
 <img src="https://github.com/user-attachments/assets/77132745-8346-46d6-b018-4c18998ba650" alt="Help-hall_Screen" width="270px" height="600px"/>
 
