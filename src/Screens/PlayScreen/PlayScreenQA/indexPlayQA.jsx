@@ -233,7 +233,7 @@ const PlayQAScreen = ({ navigation }) => {
     };
 
     const handleNextQuestion = () => {
-        if (currentQuestionIndex < 2) {
+        if (currentQuestionIndex < 14) {
             setCurrentQuestionIndex(currentQuestionIndex + 1);
             setSelectedAnswer(null);
             setIsAnswerCorrect(false);
