@@ -22,30 +22,31 @@ npm run ios
 yarn ios
 ```
 ## Step 2: Screens in the Application
-<img src="https://github.com/user-attachments/assets/b4f82d7e-c438-4ab8-a887-954720d28c97" alt="Home_Screen" width="270px" height="600px"/>
+<img src="https://github.com/user-attachments/assets/29a4f7a2-741b-45c7-b863-8a112654e3ba" alt="Home_Screen" width="270px" height="600px"/>
 
-<img src="https://github.com/user-attachments/assets/36496a21-a0d5-4e78-baec-2fc6b5ea50de" alt="Highscore_Screen" width="270px" height="600px"/>
+<img src="https://github.com/user-attachments/assets/f4239526-87d2-4f6c-935f-351430084666" alt="HighScore_Screen" width="270px" height="600px"/>
 
-<img src="https://github.com/user-attachments/assets/625b8a6f-6c1b-4fc9-b9d7-da39dc8d5633" alt="Rule_Screen" width="270px" height="600px"/>
+<img src="https://github.com/user-attachments/assets/e5fd75b1-5fa6-4a67-ba5d-59f6eefe90f1" alt="Rule_Screen" width="270px" height="600px"/>
 
-<img src="https://github.com/user-attachments/assets/8075be58-107c-460b-8dff-c91847f9c135" alt="Setting_Screen" width="270px" height="600px"/>
+<img src="https://github.com/user-attachments/assets/6584f1d2-a3a0-4594-9104-1e1502f78a59" alt="Setting_Screen" width="270px" height="600px"/>
 
-<img src="https://github.com/user-attachments/assets/d8156477-bc7f-4c8a-b551-2008eac04991" alt="PlayListQuestion_Screen" width="270px" height="600px"/>
+<img src="https://github.com/user-attachments/assets/e3add30a-7ecc-4ec0-a9e8-209c78455bc8" alt="PlayListQuestion_Screen" width="270px" height="600px"/>
 
-<img src="https://github.com/user-attachments/assets/158b8c03-f32d-4a69-ade3-b02ab89f96e4" alt="tion-Answer_Screen" width="270px" height="600px"/>
+<img src="https://github.com/user-attachments/assets/121b9647-6902-4af7-ae52-722441091758" alt="tion-Answer_Screen" width="270px" height="600px"/>
 
-<img src="https://github.com/user-attachments/assets/547aaa83-f9c2-4ce1-84e4-7ca5a54d6651" alt="StopPlay_screen" width="270px" height="600px"/>
+<img src="https://github.com/user-attachments/assets/b267ac7e-be52-4082-ae6f-dd77546dcec5" alt="StopPlay_screen" width="270px" height="600px"/>
 
-<img src="https://github.com/user-attachments/assets/44c2d300-cbf3-4814-8f42-994219b6482f" alt="5050_screen" width="270px" height="600px"/>
+<img src="https://github.com/user-attachments/assets/2e40ee9c-291c-4b47-a6a4-1825f568c30d" alt="5050_screen" width="270px" height="600px"/>
 
-<img src="https://github.com/user-attachments/assets/42862075-c614-4511-9a97-ccc5680b5e15" alt="Help-hall_Screen" width="270px" height="600px"/>
+<img src="https://github.com/user-attachments/assets/77132745-8346-46d6-b018-4c18998ba650" alt="Help-hall_Screen" width="270px" height="600px"/>
 
-<img src="https://github.com/user-attachments/assets/9a35314f-c66f-40e8-b2c1-8fe6dab8fc28" alt="Call-Friend_Screen" width="270px" height="600px"/>
+<img src="https://github.com/user-attachments/assets/86190b0d-ab42-4fe2-bae9-8ab457661a7f" alt="Call-Friend_Screen" width="270px" height="600px"/>
 
-<img src="https://github.com/user-attachments/assets/996b1784-df64-43c3-be24-d5d0ac8ef30c" alt="Choose-answer_Screen" width="270px" height="600px"/>
+<img src="https://github.com/user-attachments/assets/6b8bb330-8bf3-4b1b-aa5a-995ee52720da" alt="Choose-answer_Screen" width="270px" height="600px"/>
 
-<img src="https://github.com/user-attachments/assets/ca625064-7402-4e27-bd35-711f831984e2" alt="Correct-answer_Screen" width="270px" height="600px"/>
+<img src="https://github.com/user-attachments/assets/038e570b-13a9-4215-a07e-c6fcf0d6690b" alt="Wrong-answer_Screen" width="270px" height="600px"/>
 
-<img src="https://github.com/user-attachments/assets/5d78aeb6-4013-421f-89b2-974670eef4d3" alt="Wrong-answer_Screen" width="270px" height="600px"/>
+<img src="https://github.com/user-attachments/assets/27f8a8dd-15fa-41df-ab3a-7bd92dca2333" alt="Correct-answer_Screen" width="270px" height="600px"/>
 
-<img src="https://github.com/user-attachments/assets/1b4c16bc-7edc-480e-80ad-a5c1cc779253" alt="Winner_Screen" width="270px" height="600px"/>
+<img src="https://github.com/user-attachments/assets/3bd74676-8ebc-4ca4-9379-d39074f51aa6" alt="Winner_Screen" width="270px" height="600px"/>
+
