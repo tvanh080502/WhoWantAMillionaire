@@ -389,7 +389,14 @@ const PlayQAScreen = ({ navigation }) => {
     const currentQuestion = questionData;
 
     if (!currentQuestion) {
-        return <Text></Text>;
+        return (
+            <LinearGradient
+            colors={['#4c669f', '#3b5998', '#192f6a']}
+            style={styles.container}
+            >
+                <Text></Text>
+            </LinearGradient>
+        );
     }
 
     return (
