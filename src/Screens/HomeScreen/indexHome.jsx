@@ -4,18 +4,17 @@ import LinearGradient from 'react-native-linear-gradient';
 import styles from "./styleHome";
 import soundManager from '../../SoundManager/soundManager';
 import VolumeContext from '../../SoundManager/volumeManager';
+import { fetchScores } from '../HighscoreScreen/callapiHighscore'; 
 
 const HomeScreen = ({ navigation }) => {
     const { volume } = useContext(VolumeContext);
     const soundRef = soundManager('home_sound');
 
     useEffect(() => {
-        // Set the volume when the component mounts
         if (soundRef.current) {
             soundRef.current.setVolume(volume);
         }
 
-        // Cleanup sound when component unmounts
         return () => {
             if (soundRef.current) {
                 soundRef.current.stop(() => {
@@ -27,6 +26,13 @@ const HomeScreen = ({ navigation }) => {
             }
         };
     }, [volume]);
+
+    useEffect(() => {
+        // Gọi hàm fetchScores để chuẩn bị dữ liệu cho màn Highscore
+        fetchScores().then(scores => {
+            console.log('Scores loaded on HomeScreen:', scores);
+        });
+    }, []);
 
     return (
         <LinearGradient

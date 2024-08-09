@@ -68,6 +68,12 @@ const styles = StyleSheet.create({
         fontSize: 14,
         color: '#ccc',
     },
+    noDataText: {
+        fontSize: 16,
+        color: '#ffffff',
+        textAlign: 'center',
+        marginTop: 20,
+    },
 });
 
 export default styles;
