@@ -48,5 +48,6 @@ yarn ios
 
 <img src="https://github.com/user-attachments/assets/27f8a8dd-15fa-41df-ab3a-7bd92dca2333" alt="Correct-answer_Screen" width="270px" height="600px"/>
 
-<img src="https://github.com/user-attachments/assets/3bd74676-8ebc-4ca4-9379-d39074f51aa6" alt="Winner_Screen" width="270px" height="600px"/>
+<img src="https://github.com/user-attachments/assets/508c69ad-dc46-4ca5-afa9-16e508f8a9a7" alt="Winner_Screen" width="270px" height="600px"/>
+
 
